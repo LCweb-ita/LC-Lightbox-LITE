@@ -33,12 +33,7 @@ Main features
 * HTML support in element descriptions
 * 100% CSS Driven
 * (optional) Mousewheel and Keyboard elements navigation
-
-* Touch integrations
-	* Swipe > navigate through elements
-	* Double-tap > zoom-in image
-	* Pinch-in and out > zoom-in and out image
-
+* Swipe integration to navigate (requires AlloyFinger)
 * Dev-oriented and well-documented [methods & Events](https://lcweb.it/lc-lightbox/documentation?section=methods)
 * 4 layouts (text over element, under element or on right/left side)
 * (optional) closing button on corner position <em>(for inner commands)</em>
