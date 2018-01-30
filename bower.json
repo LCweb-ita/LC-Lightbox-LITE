@@ -16,7 +16,7 @@
   "homepage": "https://lcweb.it/lc-lightbox",
   "dependencies": {
     "jquery": ">=1.7.0",
-	"alloyfinger": ">=0.1.13"
+	"alloyfinger": "latest"
   },
   "ignore": [
     "lib"
