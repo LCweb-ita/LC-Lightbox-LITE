@@ -1,5 +1,5 @@
 # LC Lightbox (LITE)
-LC Lightbox is a modern jQuery lightbox focused on contents. Show and mix images, videos, iframes and HTML.<br/> 
+LC Lightbox is a modern jQuery lightbox focused on contents.<br/> 
 Totally responsive and adaptive, is extremely flexible to be tailored in the minimum details!
 
 Hassle-free and immediate setup using an unique javascript file. <br/>
