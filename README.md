@@ -1,11 +1,14 @@
 # LC Lightbox (LITE)
-LC Lightbox is a modern jQuery lightbox focused on contents. Show and mix images, videos, iframes and HTML.
+LC Lightbox is a modern jQuery lightbox focused on contents. Show and mix images, videos, iframes and HTML.<br/> 
 Totally responsive and adaptive, is extremely flexible to be tailored in the minimum details!
+
+Hassle-free and immediate setup using an unique javascript file. <br/>
+Overall plugin weight is only 46KB (JS) + 34KB (CSS)
 
 ![lc-lightbox](https://lcweb.it/wp-content/uploads/2018/01/lcl_github_img.png)
 
-Hassle-free and immediate setup using an unique javascript file.
-Overall plugin weight is only 
+
+&nbsp;
 
 
 Main features
@@ -53,7 +56,10 @@ Main features
 * Thumbnails script support (eg. easily integrates with Timthumb)
 * MUCH MORE! [check lightbox options](https://lcweb.it/lc-lightbox/documentation?section=opts)
 
- 
+
+&nbsp;
+
+
 Requirements
 ---
 
@@ -62,9 +68,15 @@ Requirements
 * To implement touch actions you need to use [AlloyFinger](https://github.com/AlloyTeam/AlloyFinger/) (file included in LIB folder)
 
 
+&nbsp;
+
+
 Live Demo
 ---
 [https://lcweb.it/lc-lightbox](https://lcweb.it/lc-lightbox)
+
+
+&nbsp;
 
 
 Documentation
@@ -72,17 +84,26 @@ Documentation
 [https://lcweb.it/lc-lightbox/documentation](https://lcweb.it/lc-lightbox/documentation)
 
 
+&nbsp;
+
+
 License
 ---
 
-LC Lightbox LITE is free and released under the MIT license.
+LC Lightbox LITE is free and released under the MIT license.<br/>
 You can purchase the fully-featured premium version on [Codecanyon](https://codecanyon.net/user/lcweb/portfolio)
  
- 
+
+&nbsp;
+
+
 Extra
 ---
 
 Premium LC Lightbox version is implemented in the premium WordPress plugin [Global Gallery](http://www.lcweb.it/global-gallery)
+
+
+&nbsp;
 
 
 Fun Fact
