@@ -1,23 +1,23 @@
 {
-  name: 'LC-Lightbox-LITE',
-  description: 'LC Lightbox is a modern jQuery lightbox focused on contents',
-  main: [
+  'name': 'LC-Lightbox-LITE',
+  'description': 'LC Lightbox is a modern jQuery lightbox focused on contents',
+  'main': [
   	'js/lc_lightbox.lite.min.js',
 	'css/lc_lightbox.min.css'
   ],
-  keywords: [
+  'keywords': [
     'jquery',
     'lightbox'
   ],
-  authors: [
+  'authors': [
     'Luca Montanari (https://lcweb.it)'
   ],
-  license: 'MIT',
-  homepage: 'https://lcweb.it/lc-lightbox',
-  dependencies: {
+  'license': 'MIT',
+  'homepage': 'https://lcweb.it/lc-lightbox',
+  'dependencies': {
     "jquery": ">=1.7.0"
   },
-  ignore: [
+  'ignore': [
     'lib'
   ]
 }
