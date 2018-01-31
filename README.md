@@ -78,6 +78,7 @@ Documentation
 ---
 [https://lcweb.it/lc-lightbox/documentation](https://lcweb.it/lc-lightbox/documentation)
 
+Optionally you can install the plugin via Bower, using this instruction: `bower install lc-lightbox-lite`
 
 &nbsp;
 
@@ -105,3 +106,7 @@ Fun Fact
 ---
 
 Why release starts from v1.1? LC Lightbox has been used and developed for [Global Gallery](http://www.lcweb.it/global-gallery) WordPress plugin in 2017!
+
+* * *
+
+Copyright &copy; Luca Montanari (aka LCweb)
