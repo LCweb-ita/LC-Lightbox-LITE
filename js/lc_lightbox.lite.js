@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.1
+  * @version	: 	1.1.1
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -1765,12 +1765,18 @@
 						if(bg_img) {
 							
 							// has thumbs maker?
-							if(lcl_ai_opts.thumbs_maker_url && v.poster) {
+							if(lcl_ai_opts.thumbs_maker_url && (v.poster || $.inArray(v.type, ['youtube', 'vimeo', 'dailymotion']) === -1)) {
 								 var base = lcl_ai_opts.thumbs_maker_url;
 								 bg_img = base.replace('%URL%', encodeURIComponent(bg_img)).replace('%W%', lcl_ai_opts.thumbs_w).replace('%H%', lcl_ai_opts.thumbs_h);
 							}
 							
 							bg = 'style="background-image: url(\''+ bg_img +'\');"';
+							
+							
+							// if is video - store as vid_poster
+							if( $.inArray(v.type, ['youtube', 'vimeo', 'dailymotion']) !== -1 && !v.poster) {
+								lcl_ai_vars.elems[i].vid_poster = bg_img;		
+							}
 						}
 					}
 					
@@ -2216,9 +2222,17 @@
 				var el = lcl_curr_vars.elems[ lcl_curr_vars.elem_index ];
 				var page_url = encodeURIComponent(window.location.href);
 				
-				var url = encodeURIComponent(el.src);
-				var title = encodeURIComponent(el.title);
-				var descr = encodeURIComponent(el.txt);
+				var title = encodeURIComponent(el.title).replace(/'/g, "\\'");
+				var descr = encodeURIComponent(el.txt).replace(/'/g, "\\'");
+
+				// find image's URL
+				if(el.type == 'image') {
+					var img = el.src;
+				} else {
+					var img = (el.poster) ? el.poster : false;
+					if(!img && typeof(el.vid_poster) != 'undefined') {img = el.vid_poster;}
+				}
+
 
 				// prepare and append code
 				var code = 
@@ -2231,9 +2245,13 @@
 						code += '<br/><a class="lcl_icon lcl_wa" href="whatsapp://send?text='+ page_url +'" data-action="share/whatsapp/share"></a>'; 	
 					}
 					
+					// pinterest only if there's an image
+					if(img) {
+						code += 	
+						'<a class="lcl_icon lcl_pint" onClick="window.open(\'http://pinterest.com/pin/create/button/?url='+ page_url +'&media='+ encodeURIComponent(img) +'&description='+ title +'\',\'sharer\',\'toolbar=0,status=0,width=575,height=330\');" href="javascript: void(0)"></a>';
+					}
+				
 				code += 	
-					'<a class="lcl_icon lcl_pint" onClick="window.open(\'http://pinterest.com/pin/create/button/?url='+ page_url +'&media='+ url +'&description='+ title +'\',\'sharer\',\'toolbar=0,status=0,width=575,height=330\');" href="javascript: void(0)"></a>'+
-					
 				'</div>';
 				
 				$('.lcl_socials').addClass('lcl_socials_shown').html(code);
