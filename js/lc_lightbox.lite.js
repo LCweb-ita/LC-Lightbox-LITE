@@ -2,11 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-<<<<<<< HEAD
   * @version	: 	1.2
-=======
-  * @version	: 	1.1.1
->>>>>>> origin/master
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -360,6 +356,7 @@
 		var el_type_finder = function(src, forced_type) {
 			if(typeof(forced_type) == 'undefined') {
 				forced_type = lcl_ai_opts.global_type;
+				return forced_type;
 			}
 			
 			src = src.toLowerCase();
@@ -1018,8 +1015,6 @@
 						}
 					}
 				}
-				
-				add_comments();
 			}
 			else {
 				$('.lcl_txt_toggle').hide();
@@ -1246,13 +1241,6 @@
 					} else {
 						$('.lcl_image_elem').css('background-size', 'cover');
 					}
-					
-					disable_zoom_on_resize();
-				}
-				
-				// focus iframe to track click
-				if($('.lcl_loading_iframe').length) {
-					lcl_iframe_click();	
 				}
 
 				$('#lcl_wrap').removeClass('lcl_first_sizing lcl_switching_elem lcl_is_resizing lcl_browser_resize');
