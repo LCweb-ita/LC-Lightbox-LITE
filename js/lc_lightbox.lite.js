@@ -2,14 +2,14 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.1
+  * @version	: 	1.2
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
   
   * Released under the MIT license
   */
-
+ 
 (function ($) {
 	lcl_objs 		= []; // array containing all initialized objects - useful for deeplinks
 	
@@ -28,9 +28,6 @@
 	lcl_deeplink_tracked= false; // flag to track url changes and initial reading once
 	lcl_hashless_url	= false; // page URL without eventual hashes
 	lcl_url_hash		= ''; // URL hashtag
-	
-	// fixed values
-	lcl_vid_instance_num = 0; // video.js instances number
 	
 	// lightbox structure
 	var lb_code =
@@ -113,18 +110,18 @@
 			gallery_hook	: 'rel', // attribute grouping elements - use false to create a gallery with all fetched elements 
 			live_elements	: true, // if a selector is found, set true to handle automatically DOM changes
 			preload_all		: false, // whether to preload all images on document ready
-			global_type		: 'image', // force elements type
-			
+			global_type		: 'image',
+
 			src_attr		: 'href', // attribute containing element's source
 			title_attr		: 'title', // attribute containing the title - is possible to specify a selector with this syntax: "> .selector" or "> span" 
 			txt_attr		: 'data-lcl-txt', // attribute containing the description - is possible to specify a selector with this syntax: "> .selector" or "> span" 
 			author_attr		: 'data-lcl-author', // attribute containing the author - is possible to specify a selector with this syntax: "> .selector" or "> span" 
 			
 			slideshow		: true, // whether to enable slideshow
-			open_close_time	: 500, // animation duration for lightbox opening and closing / 1000 = 1sec
+			open_close_time	: 400, // animation duration for lightbox opening and closing / 1000 = 1sec
 			ol_time_diff	: 100, // overlay's animation advance (on opening) and delay (on close) to window / 1000 = sec
-			fading_time		: 150, // elements fading animation duration in millisecods / 1000 = 1sec
-			animation_time	: 300, // sizing animation duration in millisecods / 1000 = 1sec
+			fading_time		: 80, // elements fading animation duration in millisecods / 1000 = 1sec
+			animation_time	: 250, // sizing animation duration in millisecods / 1000 = 1sec
 			slideshow_time	: 6000, // slideshow interval duration in milliseconds / 1000 = 1sec
 			autoplay		: false, // autoplay slideshow - bool
 			counter			: false, // whether to display elements counter
@@ -133,23 +130,24 @@
 			
 			max_width		: '93%', // Lightbox maximum width. Use a responsive percent value or an integer for static pixel value
 			max_height		: '93%', // Lightbox maximum height. Use a responsive percent value or an integer for static pixel value
+			wrap_padding	: false, // set lightbox wrapping padding. Useful to maintain spaces using px max-sizes. Use a CSS value (string)
 			ol_opacity		: 0.7, // overlay opacity / value between 0 and 1
 			ol_color		: '#111', // background color of the overlay
 			ol_pattern		: false, // overlay patterns - insert the pattern name or false
-			border_w		: 3, // width of the lightbox border in pixels 
+			border_w		: 0, // width of the lightbox border in pixels 
 			border_col		: '#ddd', // color of the lightbox border
-			padding			: 10, // width of the lightbox padding in pixels
-			radius			: 4, // lightbox border radius in pixels 
+			padding			: 0, // width of the lightbox padding in pixels
+			radius			: 0, // lightbox border radius in pixels 
 			shadow			: true, // whether to apply a shadow around lightbox window
 			remove_scrollbar: true, // whether to hide page's vertical scroller
 			
 			wrap_class		: '', // custom classes added to wrapper - for custom styling/tracking
 			skin			: 'light', // light / dark / custom
-			data_position	: 'over', // over / under / lside / rside
+			data_position	: 'over', // over / under / lside / rside	
 			cmd_position	: 'inner', // inner / outer	
 			ins_close_pos	: 'normal', // set closing button position for inner commands - normal/corner	
 			nav_btn_pos		: 'normal', // set arrows and play/pause position - normal/middle
-				
+	
 			txt_hidden		: 500, // whether to hide texts on lightbox opening - bool or int (related to browser's smaller side)
 			show_title		: true, // bool / whether to display titles
 			show_descr		: true, // bool / whether to display descriptions
@@ -163,14 +161,16 @@
 			thumb_attr		: false, // attribute containing thumb URL to use or false to use thumbs maker
 			thumbs_maker_url: false, // script baseurl to create thumbnails (use src=%URL% w=%W% h=%H%)
 			
-			fullscreen		: true, // Allow the user to expand a resized image. true/false
+			fullscreen		: false, // Allow the user to expand a resized image. true/false
 			fs_img_behavior	: 'fit', // resize mode of the fullscreen image - smart/fit/fill
 			fs_only			: 500, // when directly open in fullscreen mode - bool or int (related to browser's smaller side)
 			browser_fs_mode : true, // whether to trigger or nor browser fullscreen mode
 			
-			socials			: true, // bool
+			socials			: false, // bool
+			fb_direct_share	: false, // bool / whether to use direct FB contents share (requires APP ID to be specified)  
+			
 			txt_toggle_cmd	: true, // bool / allow text hiding
-			download		: true, // bool / whether to add download button
+			download		: false, // bool / whether to add download button
 			touchswipe		: true, // bool / Allow touch interactions for mobile (requires AlloyFinger)
 			mousewheel		: true, // bool / Allow elements navigation with mousewheel
 			modal			: false, // enable modal mode (no closing on overlay click)
@@ -287,11 +287,6 @@
 		var setup_elems_obj = function($subj) {
 			var o = lcl_ai_opts;
 
-			// if single opening - load just that index  
-			if(!o.gallery) {
-				$subj = $subj.eq( lcl_ai_vars.elem_index );	
-			}
-			
 			// [src: url/selector (only required data), title: (string), descr: (string), author: (string), ajax: bool, type: image/frame/text] 
 			var new_elems = []; 
 			$subj.each(function() {
@@ -310,7 +305,7 @@
 				}
 				else {
 					var type = el_type_finder(src, $e.data('lcl-type'));  
-
+						
 					// compose
 					if(type != 'unknown') {
 						var el = {
@@ -322,10 +317,12 @@
 							author 	: (o.show_author) 	? attr_or_selector_data($e, 'author_attr') : '',	
 							thumb	: (o.thumb_attr && typeof(o.thumb_attr) != 'undefined')	? $e.attr(o.thumb_attr) : '',	
 							
-							download: ((type == 'image') && typeof($e.data('lcl-path')) != 'undefined') ? $e.data('lcl-path') : false,
+							width	: (type != 'image' && typeof($e.data('lcl-w')) != 'undefined') ? $e.data('lcl-w') : false,
+							height	: (type != 'image' && typeof($e.data('lcl-h')) != 'undefined') ? $e.data('lcl-h') : false,
+							download: ((type == 'image' || type == 'video' || type == 'html') && typeof($e.data('lcl-path')) != 'undefined') ? $e.data('lcl-path') : false,
 							
-							force_outer_cmd : (typeof($e.data('lcl-outer-cmd')) != 'undefined') 	? $e.data('lcl-outer-cmd') : '',
-							canonical_url	: (typeof($e.data('lcl-canonical-url')) != 'undefined') ? $e.data('lcl-canonical-url') : '',
+							force_over_data	: (typeof($e.data('lcl-force-over-data')) != 'undefined') 	? parseInt($e.data('lcl-force-over-data'), 10) : '',   
+							force_outer_cmd : (typeof($e.data('lcl-outer-cmd')) != 'undefined') 		? $e.data('lcl-outer-cmd') : '',
 						};
 					}
 					else {
@@ -339,7 +336,6 @@
 				
 				new_elems.push(el);
 			});
-			
 			
 			// if only one element - remove nav arrows and thumbs nav 
 			if(new_elems.length < 2) {
@@ -361,16 +357,14 @@
 			if(typeof(forced_type) == 'undefined') {
 				forced_type = lcl_ai_opts.global_type;
 			}
-			if($.inArray(forced_type, ['image']) !== -1) {
-				return forced_type;	
-			}
 			
 			src = src.toLowerCase();
 			var img_regex 	= /^https?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpe?g|gif|png)$/;
-			
+
 			if(img_regex.test(src)) { // image matching
 				return 'image';	
 			}
+	
 			return 'unknown';
 		};
 		
@@ -383,6 +377,7 @@
 			if(lcl_ai_vars.elems.length < 2 || !lcl_ai_opts.gallery) {return false;}
 
 			if(lcl_ai_vars.elem_index > 0) { // prev
+
 				maybe_preload(false, (lcl_ai_vars.elem_index - 1));	
 			}
 			if(lcl_ai_vars.elem_index != (lcl_ai_vars.elems.length - 1)) { // next
@@ -392,7 +387,7 @@
 
 
 		/* preload images and eventually trigger showing function - if index not specified, loads current index */
-		var maybe_preload = function(show_when_ready, el_index) {
+		var maybe_preload = function(show_when_ready, el_index, cache_check) {
 			var v = lcl_ai_vars;
 
 			// if forced index is missing - use current one
@@ -423,12 +418,15 @@
 				}).attr('src', to_preload);
 			}
 			else {
+				if(show_when_ready || typeof(cache_check) != 'undefined') {
+					$('#lcl_loader').addClass('no_loader');
+				}
 				if(show_when_ready) {
 					show_element();
 				}
 			}
 		};
-
+		
 		
 		/////////////
 		
@@ -458,9 +456,12 @@
 							el.txt	 	= (typeof(v.txt) == 'undefined') ? '' : revert_html_entit(v.txt); 
 							el.author 	= (typeof(v.author) == 'undefined') ? '' : revert_html_entit(v.author); 
 
-							el.force_outer_cmd 	= (typeof(v.force_outer_cmd) == 'undefined') ? false : v.force_outer_cmd;
-							el.canonical_url 	= (typeof(v.canonical_url) == 'undefined') ? false : v.canonical_url;
+							el.width 	= (typeof(v.width) == 'undefined') ? false : v.width;
+							el.height 	= (typeof(v.height) == 'undefined') ? false : v.height;
 							
+							el.force_over_data 	= (typeof(v.force_over_data) == 'undefined') ? false : parseInt(v.force_over_data, 10);
+							el.force_outer_cmd 	= (typeof(v.force_outer_cmd) == 'undefined') ? false : v.force_outer_cmd;
+
 							el.thumb 	= (typeof(v.thumb) == 'undefined') ? false : v.thumb;
 							el.download = ((el_type != 'image') || typeof(v.download) == 'undefined') ? false : el.download;
 							
@@ -573,12 +574,13 @@
 			// if there is a clicked element - set selected index
 			if($co) {
 				$.each(v.elems, function(i, e) {
-					
 					if( e.src == $co.attr(o.src_attr) ) {
 						v.elem_index = i;
 						return false; 	
 					}
 				});
+				
+				
 			}
 			
 			// array or deeplink initialization - check index existence
@@ -593,6 +595,8 @@
 			maybe_preload(false);
 			
 			// setup lightbox code
+
+
 			setup_code();
 			touch_events();
 
@@ -615,11 +619,8 @@
 		/* remove lightbox pre-show classes */
 		var rm_pre_show_classes = function() {
 			// show window and overlay 
-				$('#lcl_wrap').removeClass('lcl_pre_show').addClass('lcl_shown');
-				
-				//setTimeout(function() {
-					$('#lcl_loader').removeClass('lcl_loader_pre_first_el');
-				//}, (lcl_ai_opts.ol_time_diff));	
+			$('#lcl_wrap').removeClass('lcl_pre_show').addClass('lcl_shown');
+			$('#lcl_loader').removeClass('lcl_loader_pre_first_el');
 		};
 		
 
@@ -641,6 +642,10 @@
 			
 			if($('#lcl_wrap').length) {$('#lcl_wrap').remove();}
 			$('body').append(lb_code);	
+			
+			
+			// lightbox max sizes
+			$('#lcl_wrap').attr('data-lcl-max-w', o.max_width).attr('data-lcl-max-h', o.max_height);
 
 
 			// command positions classes
@@ -684,8 +689,7 @@
 			if(!o.txt_toggle_cmd) 	{$('.lcl_txt_toggle').remove();}
 			if(!o.socials) 			{$('.lcl_socials').remove();}
 			if(!o.download) 		{$('.lcl_download').remove();}
-			if(!o.counter || v.elems.length < 2) {$('.lcl_counter').remove();}
-			if(!o.img_zoom)			{$('.lcl_zoom_icon').remove();}
+			if(!o.counter || v.elems.length < 2 || !o.gallery) {$('.lcl_counter').remove();}
 			
 			// fullscreen
 			v.force_fullscreen = false;
@@ -698,7 +702,7 @@
 			}
 				
 			// prev/next buttons
-			if(v.elems.length < 2) {
+			if(v.elems.length < 2 || !o.gallery) {
 				$('.lcl_prev, .lcl_play, .lcl_next').remove();
 			} else {
 				if(o.nav_btn_pos == 'middle') {
@@ -707,40 +711,49 @@
 			}
 			
 			// thumbs nav
-			if(!o.thumbs_nav || lcl_ai_vars.elems.length < 2) {
+			if(!o.thumbs_nav || lcl_ai_vars.elems.length < 2 || !o.gallery) {
 				$('#lcl_thumbs_nav, .lcl_thumbs_toggle').remove();
 			} 
 			else {
 				$('#lcl_thumbs_nav').css('height', o.thumbs_h); // use JS to pick outerHeight after
 				
 				var th_margins = $('#lcl_thumbs_nav').outerHeight(true) - o.thumbs_h; 
-				css += '#lcl_window {margin-top: '+ ((o.thumbs_h - th_margins ) * -1) +'px;}';	
+				css += '#lcl_window {margin-top: '+ ((o.thumbs_h - th_margins ) * -1) +'px;}';
+				
+				// center lightbox if cmds are on top and thumbs are hidden
+				css += '.lcl_tn_hidden.lcl_outer_cmd:not(.lcl_fullscreen_mode) #lcl_window {margin-bottom: '+ ($('.lcl_close').outerHeight(true) * -1) +'px;}';	
 			}
-
+			
 			//////
 			
 			// apply skin and layout
 			wrap_classes.push('lcl_txt_'+ o.data_position +' lcl_'+ o.skin);
-			css += set_wrap_padding();
-			
-			
+
 			css += '#lcl_overlay {background-color: '+ o.thumbs_h +'px; opacity: '+ o.ol_opacity +';}';
 			
 			if(o.ol_pattern) 	{$('#lcl_overlay').addClass('lcl_pattern_'+ o.ol_pattern);}
 			if(o.modal)			{$('#lcl_overlay').addClass('lcl_modal');}
 			
-			if(o.border_w) 	{css += '#lcl_window {border: '+ o.border_w +'px solid '+ o.border_col +';}';}
-			if(o.padding) 	{css += '#lcl_subj, #lcl_txt, #lcl_nav_cmd {margin: '+ o.padding +'px;}';}
-			if(o.radius) 	{css += '#lcl_window, #lcl_contents_wrap {border-radius: '+ o.radius +'px;}';}
-			if(o.shadow) 	{css += '#lcl_window {box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);}';}
+			if(o.wrap_padding) 	{css += '#lcl_wrap {padding: '+ o.wrap_padding +';}';}
+			if(o.border_w) 		{css += '#lcl_window {border: '+ o.border_w +'px solid '+ o.border_col +';}';}
+			if(o.padding) 		{css += '#lcl_subj, #lcl_txt, #lcl_nav_cmd {margin: '+ o.padding +'px;}';}
+			if(o.radius) 		{css += '#lcl_window, #lcl_contents_wrap {border-radius: '+ o.radius +'px;}';}
+			if(o.shadow) 		{css += '#lcl_window {box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);}';}
 			
 			if(o.cmd_position == 'inner' && o.ins_close_pos == 'corner') {
 				css += '#lcl_corner_close {'+
 					'top: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerWidth() / 2)) * -1) +'px;'+
 					'right: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerHeight() / 2)) * -1) +';'+
 				'}';
+				
+				
+				// if no button is in inner cmd w/ corner close - hide bar (not on FS)
+				if(!$('#lcl_nav_cmd > *:not(.lcl_close)').length) {
+					css += '#lcl_wrap:not(.lcl_fullscreen_mode):not(.lcl_forced_outer_cmd) #lcl_nav_cmd {'+
+						'display: none;'+
+					'}';	
+				}
 			}
-
 
 			// custom CSS
 			if($('#lcl_inline_style').length) {$('#lcl_inline_style').remove();}
@@ -827,19 +840,6 @@
 			}
 		};
 		
-		
-		/* returns wrapper padding css */
-		var set_wrap_padding = function(entering_fullscreen) {
-			if(typeof(entering_fullscreen) == 'undefined') {
-				var padd_horiz = (100 - parseInt(lcl_ai_opts.max_width, 10)) / 2;
-				var padd_vert = (100 - parseInt(lcl_ai_opts.max_height, 10)) / 2;
-				
-				return '#lcl_wrap {padding: '+ padd_vert+'vh '+padd_horiz+'vw;}';
-			} 
-			else {
-				return '#lcl_wrap {padding: 0;}';
-			}
-		};
 		
 		
 		// prevent page touch scroll while moving a specific element
@@ -971,12 +971,11 @@
 			// setup subect
 			switch(el.type) {
 				case 'image' :
-					$('#lcl_elem_wrap').html('<img class="lcl_elem" style="visibility: hidden;" src="'+ el.src +'" />');
 					$('#lcl_elem_wrap').css('background-image', 'url(\''+ el.src +'\')');
 					break;
 				
 				default : // error message size
-					$('#lcl_elem_wrap').html('<div id="lcl_inline" class="lcl_elem"><br/><br/>Error loading the resource .. </div>');
+					$('#lcl_elem_wrap').html('<div id="lcl_inline" class="lcl_elem"><br/>Error loading the resource .. </div>');
 					break; 
 			}
 			
@@ -1015,6 +1014,8 @@
 						}
 					}
 				}
+				
+				add_comments();
 			}
 			else {
 				$('.lcl_txt_toggle').hide();
@@ -1027,10 +1028,44 @@
 		};
 		
 		
+		/* 
+		 * given a CSS size (integer (px), %, vw or vh) returns the related pixel value 
+		 * dimension = w or h
+		 */
+		var css_size_to_px = function(size, dimension, ignore_max) {
+			var px = 0; 
+			var $wrap = $('#lcl_wrap');
+			
+			var win_w = $(window).width() - parseInt($wrap.css('padding-left'), 10) - parseInt($wrap.css('padding-right'), 10);
+			var win_h = $(window).height() - parseInt($wrap.css('padding-top'), 10) - parseInt($wrap.css('padding-bottom'), 10);
+			
+			if(!isNaN(parseFloat(size)) && isFinite(size)) { // integer value
+				px = parseInt(size, 10);	
+			}
+			else if	(size.toString().indexOf('%') !== -1) {
+				var val = (dimension == 'w') ? win_w : win_h;
+				px = val * (parseInt(size, 10) / 100);	
+			}
+			else if	(size.toString().indexOf('vw') !== -1) {
+				px = win_w * (parseInt(size, 10) / 100);
+			}
+			else if	(size.toString().indexOf('vh') !== -1) {
+				px = win_h * (parseInt(size, 10) / 100);
+			}
+			
+			// avoid > 100% values
+			if(typeof(ignore_max) == 'undefined') {
+				if(dimension == 'w' && px > win_w) {px = win_w;} 
+				if(dimension == 'h' && px > win_h) {px = win_h;}
+			}
+			return px;
+		};
+		
 	
 		/* set element sizes */
 		var size_elem = function(el, flags, txt_und_sizes) { // flags: no_txt_under, inner_cmd_checked
 			var o = lcl_ai_opts;
+			var v = lcl_ai_vars;
 			var w, h;
 
 			if(typeof(flags) == 'undefined') {flags = {};}
@@ -1040,27 +1075,34 @@
 			var add_space = (fs_mode) ? 0 : ((parseInt(o.border_w, 10) * 2) + (parseInt(o.padding, 10) * 2));
 			
 			// is side-text layout? remove forced on hover 
-			if(typeof(flags.side_txt_checked) == 'undefined') {
+			if(typeof(flags.side_txt_checked) == 'undefined' && (typeof(flags.no_txt_under) == 'undefined' || !flags.no_txt_under)) {
 				$('#lcl_wrap').removeClass('lcl_force_txt_over');
 			}
 			var side_txt = (!$('.lcl_force_txt_over').length && !$('.lcl_hidden_txt').length && $.inArray(o.data_position, ['rside', 'lside']) !== -1 && elem_has_txt(el)) ? $('#lcl_txt').outerWidth() : 0;
 
 			// has thumbs nav?
-			var thumbs_nav = (!fs_mode && $('#lcl_thumbs_nav').length && !$('.lcl_tn_hidden').length) ? $('#lcl_thumbs_nav').outerHeight(true) : 0;
+			var thumbs_nav = (!fs_mode && $('#lcl_thumbs_nav').length && !$('.lcl_tn_hidden').length) ? $('#lcl_thumbs_nav').outerHeight(true) - parseInt($('#lcl_wrap').css('padding-bottom'), 10) : 0;
 			
 			// outer commands?
-			var cmd_h = (!fs_mode && $('.lcl_outer_cmd').length) ? $('#lcl_nav_cmd').outerHeight() : 0;
+			var cmd_h = (!fs_mode && $('.lcl_outer_cmd').length) ? $('.lcl_close').outerHeight(true) + parseInt($('#lcl_nav_cmd').css('padding-top'), 10) + parseInt($('#lcl_nav_cmd').css('padding-bottom'), 10) : 0;
+			
+			// wrap-up px to remove
+			var horiz_add_space = add_space + side_txt;
+			var vert_add_space = add_space + thumbs_nav + cmd_h;
 			
 			// calculate max sizes
-			var max_w = (fs_mode) ? $(window).width() : Math.floor($('#lcl_wrap').width()) - add_space - side_txt;
-			var max_h = (fs_mode) ? $(window).height() : Math.floor($('#lcl_wrap').height()) - add_space - thumbs_nav - cmd_h;	
+			var max_w_attr = $('#lcl_wrap').attr('data-lcl-max-w');
+			var max_h_attr = $('#lcl_wrap').attr('data-lcl-max-h');
+			
+			var max_w = (fs_mode) ? $(window).width() 	: Math.floor(css_size_to_px(max_w_attr, 'w')) - horiz_add_space;
+			var max_h = (fs_mode) ? $(window).height() 	: Math.floor(css_size_to_px(max_h_attr, 'h')) - vert_add_space;	
 			
 			/////////
-			
+
 			// sizes already calculated by text under processor
-			if(typeof(lcl_ai_vars.txt_und_sizes) == 'object') {
-				w = lcl_ai_vars.txt_und_sizes.w;
-				h = lcl_ai_vars.txt_und_sizes.h;	
+			if(typeof(v.txt_und_sizes) == 'object') {
+				w = v.txt_und_sizes.w;
+				h = v.txt_und_sizes.h;	
 			}
 			
 			// normal processing
@@ -1068,35 +1110,36 @@
 				switch(el.type) {
 					case 'image' : // discard forced sizes
 						$('#lcl_elem_wrap').css('bottom', 0);
-						var img_sizes = lcl_ai_vars.img_sizes_cache[ el.src ];
-
-						$('#lcl_elem_wrap img').css({
-							'maxWidth' : (img_sizes.w < max_w) ? img_sizes.w : max_w,
-							'maxHeight': (img_sizes.h < max_h) ? img_sizes.h : max_h 
-						});
+						var img_sizes = v.img_sizes_cache[ el.src ];
 						
-						w = $('#lcl_elem_wrap img').width();
-						h = $('#lcl_elem_wrap img').height();
-						
-						// is zero? then recurse waiting a bit
-						if(!w || !h) {
-							setTimeout(function() {
-								size_elem(el, flags, txt_und_sizes);
-							}, 30);
-							return false;	
+						// get image sizes
+						if(img_sizes.w <= max_w) {
+							w = img_sizes.w;
+							h = img_sizes.h;	
+						} else {
+							w = max_w;
+							h = Math.floor(w * (img_sizes.h / img_sizes.w));	
 						}
-			
+						
+						// height is bigger than max one?
+						if(h > max_h) {
+							h = max_h;
+							w = Math.floor(h * (img_sizes.w / img_sizes.h));	
+						}
+						
 						// calculate text under 
 						if(elem_has_txt(el) && !$('.lcl_hidden_txt').length && o.data_position == 'under' && typeof(flags.no_txt_under) == 'undefined') {
 							txt_under_h(w, h, max_h);
 							
 							$(document).off('lcl_txt_und_calc').on('lcl_txt_und_calc', function() {
-								if(lcl_ai_vars.txt_und_sizes) {
-									if(lcl_ai_vars.txt_und_sizes == 'no_under') {
-										flags.no_txt_under = true;	
+								if(v.txt_und_sizes) {
+									if(v.txt_und_sizes == 'no_under') {
+										flags.no_txt_under = true;
 									}
-
-									return size_elem(el, flags);	
+									
+									
+									
+									return size_elem( v.elems[ v.elem_index], flags);	
 								}
 							});
 							return false;
@@ -1105,7 +1148,8 @@
 							$('#lcl_subj').css('maxHeight', 'none');		
 						}
 						break;
-
+	
+					
 					default : // error message size
 						w = 280;
 						h = 125;
@@ -1122,15 +1166,15 @@
 			) {
 				var sto_w = w + add_space;
 				var sto_h = h + add_space;
-				var img_sizes = (el.type == 'image') ? lcl_ai_vars.img_sizes_cache[ el.src ] : '';
+				var img_sizes = (el.type == 'image') ? v.img_sizes_cache[ el.src ] : '';
 				
-				if( // if image size or custom size is already tiny - skip
-					(img_sizes && img_sizes.w > 400 && img_sizes.h > 400) ||
-					(typeof(cust_w) != 'undefined' && (!cust_w || cust_w > 400)) ||
-					(typeof(cust_h) != 'undefined' && (!cust_h || cust_h > 400))  
-				) {
-				
-					if(!side_to_over_txt(sto_w, sto_h, side_txt)) {
+				// forced text over treshold
+				var tot = el.force_over_data;
+				if(!tot) {tot = 400;} 	
+
+				if(el.type == 'image' && img_sizes.w > tot && img_sizes.h > tot) {
+					
+					if(!side_to_over_txt(el, tot, sto_w, sto_h, side_txt)) {
 						flags.side_txt_checked = true;
 						return size_elem(el, flags);	
 					}
@@ -1139,7 +1183,7 @@
 			
 			
 			// reset text under var
-			lcl_ai_vars.txt_und_sizes = false;
+			v.txt_und_sizes = false;
 	
 			// force outer commands?
 			if(
@@ -1151,11 +1195,12 @@
 				return size_elem(el, flags);
 			}
 
+
 			// set lb window sizes
 			$('#lcl_wrap').removeClass('lcl_pre_first_el');
 			$('#lcl_window').css({
-				'width'	: (fs_mode) ? '100%' : w + add_space + side_txt,
-				'height': (fs_mode) ? '100%' : h + add_space	
+				width	: (fs_mode) ? '100%' : w + add_space + side_txt,
+				height	: (fs_mode) ? '100%' : h + add_space
 			});
 			
 			
@@ -1170,33 +1215,44 @@
 			// check thumbs nav arrows visibility
 			thumbs_nav_arrows_vis();
 
-			if(typeof(lcl_size_n_show_timeout) != 'undefined') {clearTimeout(lcl_size_n_show_timeout);}
-			var timing = ($('.lcl_first_sizing').length) ? o.open_close_time : o.animation_time;
-			if($('.lcl_browser_resize').length) {timing = 0;}
+			if(typeof(lcl_size_n_show_timeout) != 'undefined') {
+				clearTimeout(lcl_size_n_show_timeout);
+			}
+			var timing = ($('.lcl_first_sizing').length) ? o.open_close_time + 20 : o.animation_time; // +20 trick used to let CSS execute the opening timing
+			if($('.lcl_browser_resize').length || $('.lcl_toggling_fs').length || fs_mode) {
+				timing = 0;
+			}
 			
 			lcl_size_n_show_timeout = setTimeout(function() {
 				if(lcl_is_active) {lcl_is_active = false;}
 				
 				// autoplay if first opening
 				if($('.lcl_first_sizing').length) {
-					if(	o.autoplay && lcl_ai_vars.elems.length > 1 &&
-						(o.carousel || lcl_ai_vars.elem_index < (lcl_ai_vars.elems.length - 1))
+					if(	o.autoplay && v.elems.length > 1 &&
+						(o.carousel || v.elem_index < (v.elems.length - 1))
 					) {
 						lcl_start_slideshow();	
 					}
 				}
 				
-				
 				// fullscreen - image rendering manag
 				if(el.type == 'image') {
 					if($('.lcl_fullscreen_mode').length) {
-						fs_img_manag();
+						fs_img_manag(img_sizes);
 					} else {
 						$('.lcl_image_elem').css('background-size', 'cover');
 					}
+					
+					disable_zoom_on_resize();
+				}
+				
+				// focus iframe to track click
+				if($('.lcl_loading_iframe').length) {
+					lcl_iframe_click();	
 				}
 
-				$('#lcl_wrap').removeClass('lcl_first_sizing lcl_switching_elem lcl_is_resizing lcl_browser_resize');	
+				$('#lcl_wrap').removeClass('lcl_first_sizing lcl_switching_elem lcl_is_resizing lcl_browser_resize');
+				$('#lcl_loader').removeClass('no_loader');	
 				$(document).trigger('lcl_resized_window');
 			}, timing);
 		};
@@ -1268,14 +1324,18 @@
 					return false;			
 				}
 				
-				
 				// there's overflow - recurse
 				if(overflow > 0 && ( typeof(recursive_count) == 'undefined' || recursive_count < 10)) {
 	
 					var new_h = curr_h - overflow;
 					var new_w = Math.floor(new_h * w_ratio);	
 					
-					if(new_w < 200 || new_h < 200) {
+					
+					// text over treshold
+					var tot = lcl_ai_vars.elems[lcl_ai_vars.elem_index].force_over_data;
+					if(!tot) {tot = 400;} 
+					
+					if(new_w < tot || new_h < tot) {
 						$('#lcl_wrap').removeClass('lcl_txt_under_calc').addClass('lcl_force_txt_over'); // screen too small or image excessively tall - switch to text over
 						$('#lcl_subj').css('maxHeight', 'none');
 						
@@ -1294,10 +1354,6 @@
 				
 				// no overflow - ok
 				else {
-					/*$('#lcl_txt').css({
-						'right' : 0,
-						'width' : 'auto'
-					});*/
 					$('#lcl_wrap').removeClass('lcl_txt_under_calc');
 					$('#lcl_subj').css('maxHeight', (curr_h + lcl_ai_opts.padding));
 					
@@ -1309,16 +1365,16 @@
 					$(document).trigger('lcl_txt_und_calc');
 					return true;	
 				}
-			}, 80); // min val to let CSS propagate
+			}, 120); // min val to let CSS propagate
 		};
 
 		
 		
 		/* is lightbox too small to show contents with side text? turn into over txt */
-		var side_to_over_txt = function(w, h, side_txt_w) {
+		var side_to_over_txt = function(el, treshold, w, h, side_txt_w) {
 			var already_forced = $('.lcl_force_txt_over').length;
 		
-			if(w < 400 || h < 400) {
+			if(w < treshold || (el.type != 'html' && h < treshold)) {
 				if(already_forced) {return true;}
 						
 				$('#lcl_wrap').addClass('lcl_force_txt_over');		
@@ -1384,7 +1440,7 @@
 			var v 			= lcl_ai_vars; 
 			var carousel	= lcl_ai_opts.carousel;
 			
-			if(lcl_is_active || v.elems.length < 2 || $('.lcl_switching_elem').length) {return false;}
+			if(lcl_is_active || v.elems.length < 2 || !lcl_ai_opts.gallery || $('.lcl_switching_elem').length) {return false;}
 
 			// find and sanitize new index
 			if(new_el == 'next'){
@@ -1427,12 +1483,25 @@
 			
 			// hide current element and set a new one
 			lcl_is_active = true;
-			thumbs_nav_scroll_to_item(new_el);			
+			thumbs_nav_scroll_to_item(new_el);	
+			
+			// use maybe_preload to not display loader when next item is already cached
+			maybe_preload(false, new_el, true);
+			
+			
+			// switching wrapper class		
 			$('#lcl_wrap').addClass('lcl_switching_elem');	
 
 			setTimeout(function() {
 				$('#lcl_wrap').removeClass('lcl_playing_video');	
 				
+				// if switching from an html element - set static heights
+				if(v.elems[v.elem_index].type == 'html') {
+					$('#lcl_window').css('height', $('#lcl_contents_wrap').outerHeight());
+					$('#lcl_contents_wrap').css('maxHeight', 'none');
+				}
+				
+
 				// switching element - callback
 				if(typeof(lcl_ai_opts.on_elem_switch) == 'function') {
 					lcl_ai_opts.on_elem_switch.call({opts : lcl_ai_opts, vars: lcl_ai_vars, new_el : new_el});
@@ -1577,11 +1646,7 @@
 			var timing = (on_opening) ? o.open_close_time : o.fading_time;
 			setTimeout(function() {
 				$('#lcl_wrap').addClass('lcl_fullscreen_mode');
-
-				set_wrap_padding(true);
-				if(!on_opening) {
-					size_elem( v.elems[v.elem_index] );
-				}
+				size_elem( v.elems[v.elem_index] );
 
 				// disable fs toogle class when has been sized
 				$(document).on('lcl_resized_window', function() {
@@ -1594,7 +1659,7 @@
 					
 					setTimeout(function() {
 						$('#lcl_wrap').removeClass('lcl_toggling_fs');
-					}, 150 + 50); // 150 is forced sizing timing for fs switch
+					}, 150); // 50 (sizing) + 100 (smoothing) is forced sizing timing for fs switch
 				});
 			}, timing);
 			
@@ -1613,13 +1678,9 @@
 		
 		
 		/* fullscreen image rendering manag - smart/fit/fill */
-		var fs_img_manag = function() {
+		var fs_img_manag = function(img_sizes) {
 			var behav = lcl_ai_opts.fs_img_behavior;
-			
-			if(lcl_ai_vars.elems[lcl_ai_vars.elem_index].type != 'image') {return false;}
-			var img_sizes = lcl_ai_vars.img_sizes_cache[ lcl_ai_vars.elems[lcl_ai_vars.elem_index].src ];
-			
-			
+
 			// if image is smaller than screen - bg size = auto
 			if($('.lcl_fullscreen_mode').length && img_sizes.w <= $('#lcl_subj').width() && img_sizes.h <= $('#lcl_subj').height()) {
 				$('.lcl_image_elem').css('background-size', 'auto');
@@ -1667,6 +1728,7 @@
 			
 			// hide window elements
 			$('#lcl_wrap').addClass('lcl_toggling_fs');
+			$('#lcl_window').fadeTo(70, 0);
 
 
 			// set wrap class - recalculate sizes - show
@@ -1674,23 +1736,29 @@
 				// disable browser's fs
 				if(o.browser_fs_mode && typeof(set_browser_status) != 'undefined') {
 					exit_browser_fs();
+					var browser_fs_timing = 250; // time taken by browser to exit fullscreen mode
+				} else {
+					var browser_fs_timing = 0;	
 				}
 				
-				set_wrap_padding();
 				$('#lcl_wrap').removeClass('lcl_fullscreen_mode');
 				
 				// resize after a little while
 				setTimeout(function() {
 					size_elem( lcl_ai_vars.elems[lcl_ai_vars.elem_index] );
 					
+					// IE 11 requires a bit more
+					var userAgent = userAgent || navigator.userAgent;
+ 					var ie11_time = (userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1) ? 100 : 0;
+					
 					// disable fs toogle class
 					setTimeout(function() {
+						$('#lcl_window').fadeTo(30, 1);
 						$('#lcl_wrap').removeClass('lcl_toggling_fs');
-					}, o.animation_time); // 150 is forced sizing timing for fs switch
+					}, 300 + ie11_time); // 50 (sizing) + 100 (smoothing) is forced sizing timing for fs switch
 					
-				}, 550); // 550 - wait browser to exit fs
-				
-			}, o.fading_time);
+				}, browser_fs_timing);
+			}, 70);
 
 			//////
 			
@@ -1760,17 +1828,56 @@
 						// find thumbnail for each source
 						switch(v.type) {
 							case 'image' 	: bg_img = v.src; break;	
+							case 'youtube' 	: bg_img = (v.poster) ? v.poster : 'https://img.youtube.com/vi/'+ v.video_id +'/maxresdefault.jpg'; break;
+							
+							case 'vimeo' 	: 
+								
+								if(v.poster) {
+									bg_img = v.poster;
+									break;	
+								}
+								else {
+									if(typeof(lcl_ai_vars.vimeo_thumb_cache[ v.src ]) == 'undefined') {
+										tpc = 'lcl_tn_preload';
+									
+										$.getJSON('https://www.vimeo.com/api/v2/video/' + v.video_id + '.json?callback=?', {format: "json"}, function(data) { // need async
+											thumbs_nav_img_preload(data[0].thumbnail_large, i, uniq_id);
+											lcl_ai_vars.vimeo_thumb_cache[ v.src ] = data[0].thumbnail_large;
+	
+											// use ATTR to avoid issues with IE10
+											$('.lcl_tn_inner li[rel='+i+']').attr('style', $('.lcl_tn_inner li[rel='+i+']').attr('style') + ' background-image: url(\''+ data[0].thumbnail_large +'\');');
+										});
+									}
+									else {
+										bg_img = lcl_ai_vars.vimeo_thumb_cache[ v.src ];	
+									}
+								}
+								break;
+								
+							case 'video'	: 
+							case 'iframe'	: 
+							case 'html'		: 
+							
+								if(v.poster) {bg_img = v.poster;} break;	
+								
+							case 'dailymotion' 	: bg_img = (v.poster) ? v.poster : 'http://www.dailymotion.com/thumbnail/video/'+ v.video_id; break;
 						}
 						
 						if(bg_img) {
 							
 							// has thumbs maker?
-							if(lcl_ai_opts.thumbs_maker_url && v.poster) {
+							if(lcl_ai_opts.thumbs_maker_url && (v.poster || $.inArray(v.type, ['youtube', 'vimeo', 'dailymotion']) === -1)) {
 								 var base = lcl_ai_opts.thumbs_maker_url;
 								 bg_img = base.replace('%URL%', encodeURIComponent(bg_img)).replace('%W%', lcl_ai_opts.thumbs_w).replace('%H%', lcl_ai_opts.thumbs_h);
 							}
 							
 							bg = 'style="background-image: url(\''+ bg_img +'\');"';
+							
+							
+							// if is video - store as vid_poster
+							if( $.inArray(v.type, ['youtube', 'vimeo', 'dailymotion']) !== -1 && !v.poster) {
+								lcl_ai_vars.elems[i].vid_poster = bg_img;		
+							}
 						}
 					}
 					
@@ -1899,7 +2006,6 @@
 			var wrap_w = $('.lcl_tn_inner').width(); 
 			var to_center = Math.floor( ($('.lcl_tn_inner').width() - elem_w - margin) / 2 );
 			
-
 			var new_offset = ((elem_w * id) + margin * (id - 1)) + Math.floor(margin / 2) - to_center;
 			
 			$('.lcl_tn_inner').stop(true).animate({"scrollLeft" : new_offset}, 500, function() {
@@ -2011,7 +2117,7 @@
 		//////////////////////////////////////////////////////////////
 		
 
-		/* setup elements - click handlers */
+		/* show lightbox - click handlers */
 		if(!lcl_vars.is_arr_instance) {
 			if(lcl_settings.live_elements && lcl_vars.elems_selector) { // switch between static and dynamic elements retrieval   	
 					
@@ -2105,15 +2211,40 @@
 		
 		/* elems navigation with mousewheel */ 
 		$(document).on('wheel', '#lcl_overlay, #lcl_window, #lcl_thumbs_nav:not(.lcl_tn_has_arr)', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
-			
-			// if has scrollers - avoid
-			if( lcl_curr_opts.mousewheel && e.target.scrollHeight <= $(e.target).height()) {
+			if(obj != lcl_curr_obj || !lcl_curr_opts.mousewheel) {return true;}
+			var $target = $(e.target); 
+
+			// if not in window, do it!
+			if(!$target.is('#lcl_window') && !$target.parents('#lcl_window').length) {
 				e.preventDefault();
 				var delta = e.originalEvent.deltaY;
 				
 				if(delta > 0) 	{switch_elem('next');}
-				else 			{switch_elem('prev');}
+				else 			{switch_elem('prev');}	
+			}
+			
+			else {
+				// cycle to know if parents have scrollers
+				var perform = true;
+				for(a=0; a<20; a++) {
+					if($target.is('#lcl_window')) {break;}
+					
+					if($target[0].scrollHeight > $target.outerHeight()) {
+						perform = false;	
+						break;
+					}
+					else {
+						$target = $target.parent();	
+					}
+				}
+				
+				if(perform) {
+					e.preventDefault();
+					var delta = e.originalEvent.deltaY;
+						
+					if(delta > 0) 	{switch_elem('next');}
+					else 			{switch_elem('prev');}	
+				}
 			}
 		});
 		
@@ -2129,7 +2260,22 @@
 			}, 250);	
 		});
 		
-
+		
+		/* track doubleclick to zoom image */
+		$(document).on('dblclick', '.lcl_image_elem', function(e) {
+			if(obj != lcl_curr_obj) {return true;}
+			
+			if(!lcl_curr_opts.img_zoom) {return true;}
+			if(!$('.lcl_zoom_icon').length) {return true;}
+			
+			// avoid single click trigger
+			if(typeof(lcl_img_click_track) != 'undefined') {
+				clearTimeout(lcl_img_click_track);
+				zoom(true);
+			}
+		});
+		
+		
 		/* toggle text */ 
 		$(document).on('click', '.lcl_txt_toggle', function(e) {
 			if(obj != lcl_curr_obj) {return true;}
@@ -2206,6 +2352,34 @@
 			}
 		});	
 		
+		
+		/* track video start on click */
+		$(document).on('click', '.lcl_elem', function(e) {
+			if(obj != lcl_curr_obj) {return true;}
+			
+			if(!$('.lcl_playing_video').length && $.inArray($('#lcl_wrap').attr('lcl-type'), ['video']) !== -1) {
+				
+				lcl_stop_slideshow();
+				$('#lcl_wrap').addClass('lcl_playing_video');	
+			}
+		});
+		
+		/* trick to detect click on iframes */
+		var lcl_iframe_click = function() {
+			if(typeof(lcl_iframe_click_intval) != 'undefined') {clearInterval(lcl_iframe_click_intval);}
+			
+			lcl_iframe_click_intval = setInterval(function() {
+				var $ae = $(document.activeElement); 
+				
+				if($ae.is('iframe') && $ae.hasClass('lcl_elem') && ($('.lcl_youtube_elem').length || $('.lcl_vimeo_elem').length || $('.lcl_dailymotion_elem').length)) {
+					lcl_stop_slideshow();
+					$('#lcl_wrap').addClass('lcl_playing_video');	
+					
+					clearInterval(lcl_iframe_click_intval);	
+				}
+			}, 300);
+		};
+		
 
 		/* toggle socials */
 		$(document).on('click', '.lcl_socials', function(e) {
@@ -2216,24 +2390,42 @@
 				var el = lcl_curr_vars.elems[ lcl_curr_vars.elem_index ];
 				var page_url = encodeURIComponent(window.location.href);
 				
-				var url = encodeURIComponent(el.src);
-				var title = encodeURIComponent(el.title);
-				var descr = encodeURIComponent(el.txt);
+				var title = encodeURIComponent(el.title).replace(/'/g, "\\'");
+				var descr = encodeURIComponent(el.txt).replace(/'/g, "\\'");
+
+				// find image's URL
+				if(el.type == 'image') {
+					var img = el.src;
+				} else {
+					var img = (el.poster) ? el.poster : false;
+					if(!img && typeof(el.vid_poster) != 'undefined') {img = el.vid_poster;}
+				}
+
 
 				// prepare and append code
 				var code = 
-				'<div class="lcl_socials_tt lcl_tooltip lcl_tt_bottom">'+
-					'<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ page_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=325\');" href="javascript: void(0)"></a>'+
-					'<a class="lcl_icon lcl_twit" onClick="window.open(\'https://twitter.com/share?text=Check%20out%20%22'+ title +'%22%20@&url='+ page_url +'\',\'sharer\',\'toolbar=0,status=0,width=548,height=325\');" href="javascript: void(0)"></a>';
+				'<div class="lcl_socials_tt lcl_tooltip lcl_tt_bottom">';
+				
+					if(lcl_curr_opts.fb_direct_share) {
+						code += '<a class="lcl_icon lcl_fb" href="javascript: void(0)"></a>';	
+					} else {
+						code += '<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ page_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=325\');" href="javascript: void(0)"></a>';	
+					}
+
+					code += '<a class="lcl_icon lcl_twit" onClick="window.open(\'https://twitter.com/share?text=Check%20out%20%22'+ title +'%22%20@&url='+ page_url +'\',\'sharer\',\'toolbar=0,status=0,width=548,height=325\');" href="javascript: void(0)"></a>';
 					
 					// on mobile - use Whatsapp
 					if(lcl_on_mobile) {
 						code += '<br/><a class="lcl_icon lcl_wa" href="whatsapp://send?text='+ page_url +'" data-action="share/whatsapp/share"></a>'; 	
 					}
 					
+					// pinterest only if there's an image
+					if(img) {
+						code += 	
+						'<a class="lcl_icon lcl_pint" onClick="window.open(\'http://pinterest.com/pin/create/button/?url='+ page_url +'&media='+ encodeURIComponent(img) +'&description='+ title +'\',\'sharer\',\'toolbar=0,status=0,width=575,height=330\');" href="javascript: void(0)"></a>';
+					}
+				
 				code += 	
-					'<a class="lcl_icon lcl_pint" onClick="window.open(\'http://pinterest.com/pin/create/button/?url='+ page_url +'&media='+ url +'&description='+ title +'\',\'sharer\',\'toolbar=0,status=0,width=575,height=330\');" href="javascript: void(0)"></a>'+
-					
 				'</div>';
 				
 				$('.lcl_socials').addClass('lcl_socials_shown').html(code);
@@ -2241,6 +2433,30 @@
 				setTimeout(function() { // delay to let CSS execute animation
 					$('.lcl_socials_tt').addClass('lcl_show_tt');
 				}, 20);
+				
+				
+				// FB direct share
+				if(lcl_curr_opts.fb_direct_share) {
+					$(document).off('click', '.lcl_fb').on('click', '.lcl_fb', function(e) {
+						
+						FB.ui({
+							method: 'share_open_graph',
+							action_type: 'og.shares',
+							action_properties: JSON.stringify({
+								object: {
+									'og:url'		: window.location.href,
+									'og:title'		: el.title,
+									'og:description': el.txt,
+									'og:image'		: img,
+								}
+							})
+						},
+						function (response) {
+							window.close();
+						});			
+						
+					});
+				}
 			}
 			
 			// hide	
@@ -2252,7 +2468,6 @@
 				}, 260);
 			}
 		});
-		
 		
 		
 		/* toggle fullscreen via button */
@@ -2345,6 +2560,7 @@
 			var $t = $(e.target);
 			if(!lcl_shown || !lcl_on_mobile) {return true;}
 			if(obj != lcl_curr_obj) {return true;}
+
 			
 			if(!$(e.target).parents('#lcl_window').length && !$(e.target).parents('#lcl_thumbs_nav').length) {
 				e.preventDefault();
