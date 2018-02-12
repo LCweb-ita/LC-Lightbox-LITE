@@ -1454,21 +1454,21 @@
 
 
 /* OVERLAY PATTERNS */
-.lcl_pattern_oblique_dots { background-image: url(..img/patterns/oblique_dots.png); }
-.lcl_pattern_1 { background-image: url(..img/patterns/pattern-1.png); }
-.lcl_pattern_dot-1 { background-image: url(..img/patterns/pattern-dot-1.png); }
-.lcl_pattern_dot-2 { background-image: url(..img/patterns/pattern-dot-2.png); }
-.lcl_pattern_dot-b1 { background-image: url(..img/patterns/pattern-dot-b1.png); }
-.lcl_pattern_dot-b2 { background-image: url(..img/patterns/pattern-dot-b2.png); }
-.lcl_pattern_dot-b3 { background-image: url(..img/patterns/pattern-dot-b3.png); }
-.lcl_pattern_dot-b4 { background-image: url(..img/patterns/pattern-dot-b4.png); }
-.lcl_pattern_triangle-05 { background-image: url(..img/patterns/pattern-triangle-05.png); }
-.lcl_pattern_triangle-10 { background-image: url(..img/patterns/pattern-triangle-10.png); }
-.lcl_pattern_triangle-20 { background-image: url(..img/patterns/pattern-triangle-20.png); }
-.lcl_pattern_triangle-30 { background-image: url(..img/patterns/pattern-triangle-30.png); }
-.lcl_pattern_triangle-40 { background-image: url(..img/patterns/pattern-triangle-40.png); }
-.lcl_pattern_ver-line-10 { background-image: url(..img/patterns/pattern-ver-line-10.png); }
-.lcl_pattern_ver-line-20 { background-image: url(..img/patterns/pattern-ver-line-20.png); }
-.lcl_pattern_ver-line-30 { background-image: url(..img/patterns/pattern-ver-line-30.png); }
-.lcl_pattern_ver-line-40 { background-image: url(..img/patterns/pattern-ver-line-40.png); }
-.lcl_pattern_ver-line-50 { background-image: url(..img/patterns/pattern-ver-line-50.png); }
+.lcl_pattern_oblique_dots { background-image: url(../img/patterns/oblique_dots.png); }
+.lcl_pattern_1 { background-image: url(../img/patterns/pattern-1.png); }
+.lcl_pattern_dot-1 { background-image: url(../img/patterns/pattern-dot-1.png); }
+.lcl_pattern_dot-2 { background-image: url(../img/patterns/pattern-dot-2.png); }
+.lcl_pattern_dot-b1 { background-image: url(../img/patterns/pattern-dot-b1.png); }
+.lcl_pattern_dot-b2 { background-image: url(../img/patterns/pattern-dot-b2.png); }
+.lcl_pattern_dot-b3 { background-image: url(../img/patterns/pattern-dot-b3.png); }
+.lcl_pattern_dot-b4 { background-image: url(../img/patterns/pattern-dot-b4.png); }
+.lcl_pattern_triangle-05 { background-image: url(../img/patterns/pattern-triangle-05.png); }
+.lcl_pattern_triangle-10 { background-image: url(../img/patterns/pattern-triangle-10.png); }
+.lcl_pattern_triangle-20 { background-image: url(../img/patterns/pattern-triangle-20.png); }
+.lcl_pattern_triangle-30 { background-image: url(../img/patterns/pattern-triangle-30.png); }
+.lcl_pattern_triangle-40 { background-image: url(../img/patterns/pattern-triangle-40.png); }
+.lcl_pattern_ver-line-10 { background-image: url(../img/patterns/pattern-ver-line-10.png); }
+.lcl_pattern_ver-line-20 { background-image: url(../img/patterns/pattern-ver-line-20.png); }
+.lcl_pattern_ver-line-30 { background-image: url(../img/patterns/pattern-ver-line-30.png); }
+.lcl_pattern_ver-line-40 { background-image: url(../img/patterns/pattern-ver-line-40.png); }
+.lcl_pattern_ver-line-50 { background-image: url(../img/patterns/pattern-ver-line-50.png); }
