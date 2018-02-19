@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2
+  * @version	: 	1.2.1
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -1102,6 +1102,10 @@
 			if(typeof(v.txt_und_sizes) == 'object') {
 				w = v.txt_und_sizes.w;
 				h = v.txt_und_sizes.h;	
+				
+				if(el.type == 'image') {
+					var img_sizes = v.img_sizes_cache[ el.src ];	
+				}
 			}
 			
 			// normal processing
@@ -1309,7 +1313,7 @@
 				// fullscreen mode (no thumbs) - just set max height
 				if(fs_mode) {
 					$('#lcl_wrap').removeClass('lcl_txt_under_calc');
-					$('#lcl_subj').css('maxHeight', (curr_h - txt_h));
+					$('#lcl_subj').css('maxHeight', 'calc(100% - '+ txt_h +'px)');
 					
 					lcl_ai_vars.txt_und_sizes = {w: curr_w, h: curr_h};
 					$(document).trigger('lcl_txt_und_calc');
