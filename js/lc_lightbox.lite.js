@@ -2,7 +2,11 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
+<<<<<<< HEAD
   * @version	: 	1.2.2
+=======
+  * @version	: 	1.2.1
+>>>>>>> origin/master
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -319,7 +323,12 @@
 							
 							width	: (type != 'image' && typeof($e.data('lcl-w')) != 'undefined') ? $e.data('lcl-w') : false,
 							height	: (type != 'image' && typeof($e.data('lcl-h')) != 'undefined') ? $e.data('lcl-h') : false,
+<<<<<<< HEAD
 		
+=======
+							download: ((type == 'image' || type == 'video' || type == 'html') && typeof($e.data('lcl-path')) != 'undefined') ? $e.data('lcl-path') : false,
+							
+>>>>>>> origin/master
 							force_over_data	: (typeof($e.data('lcl-force-over-data')) != 'undefined') 	? parseInt($e.data('lcl-force-over-data'), 10) : '',   
 							force_outer_cmd : (typeof($e.data('lcl-outer-cmd')) != 'undefined') 		? $e.data('lcl-outer-cmd') : '',
 						};
