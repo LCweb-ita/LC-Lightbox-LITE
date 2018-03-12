@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.2
+  * @version	: 	1.2.3
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -1128,6 +1128,10 @@
 				switch(el.type) {
 					case 'image' : // discard forced sizes
 						$('#lcl_elem_wrap').css('bottom', 0);
+						
+						if(typeof(v.img_sizes_cache[ el.src ]) == 'undefined') {
+							return false;	
+						}
 						var img_sizes = v.img_sizes_cache[ el.src ];
 						
 						// get image sizes
