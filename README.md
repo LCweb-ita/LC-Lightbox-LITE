@@ -5,7 +5,7 @@ Totally responsive and adaptive, is extremely flexible to be tailored in the min
 Hassle-free and immediate setup using an unique javascript file. <br/>
 Overall plugin weight is only 46KB (JS) + 34KB (CSS)
 
-![lc-lightbox](https://lcweb.it/wp-content/uploads/2018/01/lcl_github_img.png)
+![lc-lightbox](https://lcweb.it/wp-content/uploads/2018/01/lcl_github_img.png?rev2)
 
 
 &nbsp;
