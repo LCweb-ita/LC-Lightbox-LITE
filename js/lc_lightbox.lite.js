@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.3
+  * @version	: 	1.2.5
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -1935,8 +1935,10 @@
 				$('.lcl_tn_inner').addClass('lcl_tn_mixed_types');	
 			}
 		
-			// elem offset
-			thumbs_nav_scroll_to_item(lcl_ai_vars.elem_index);
+			// elem offset - use a bit of delay to let thumbs to have proper shape
+			setTimeout(function() {
+				thumbs_nav_scroll_to_item(lcl_ai_vars.elem_index);
+			}, 300);
 		};
 		
 		
