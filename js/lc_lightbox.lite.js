@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.5
+  * @version	: 	1.2.6
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -56,7 +56,7 @@
 				'<div id="lcl_txt"></div>'+
 			'</div>'+	
 		'</div>'+
-		'<div id="lcl_thumbs_nav"></div>'+
+		'<div id="lcl_thumbs_nav" class="lcl_pre_tn_scroll"></div>'+
 		'<div id="lcl_overlay"></div>'+
 	'</div>';
 	
@@ -366,7 +366,7 @@
 			}
 			
 			src = src.toLowerCase();
-			var img_regex 	= /^https?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpe?g|gif|png)$/;
+			var img_regex 	= /^(http|https)?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpe?g|gif|png)$/;
 
 			if(img_regex.test(src)) { // image matching
 				return 'image';	
@@ -532,7 +532,7 @@
 			
 			// elements parsed - throw callback
 			if(typeof(o.elems_parsed) == 'function') {
-				o.elems_parsed.call({opts : lcl_ai_opts, vars: lcl_ai_vars});
+				o.elems_parsed.call(null, lcl_ai_opts, lcl_ai_vars);
 			}
 			
 			// elements parsed | args: elements array
@@ -844,7 +844,7 @@
 
 			// html is appended and ready - callback
 			if(typeof(o.html_is_ready) == 'function') {
-				o.html_is_ready.call({opts : lcl_ai_opts, vars: lcl_ai_vars});
+				o.html_is_ready.call(null, lcl_ai_opts, lcl_ai_vars);
 			}
 			
 			// lightbox html has been appended and managed 
@@ -943,7 +943,7 @@
 			
 				// first element show - callback
 				if(typeof(lcl_ai_opts.on_open) == 'function') {
-					lcl_ai_opts.on_open.call({opts : lcl_ai_opts, vars: lcl_ai_vars});
+					lcl_ai_opts.on_open.call(null, lcl_ai_opts, lcl_ai_vars);
 				}
 				
 				// first element show | args: element
@@ -1519,7 +1519,7 @@
 
 				// switching element - callback
 				if(typeof(lcl_ai_opts.on_elem_switch) == 'function') {
-					lcl_ai_opts.on_elem_switch.call({opts : lcl_ai_opts, vars: lcl_ai_vars, new_el : new_el});
+					lcl_ai_opts.on_elem_switch.call(null, lcl_ai_opts, lcl_ai_vars, new_el);
 				}
 				
 				// switching | args: old_elem_id, new_elem_id
@@ -1577,7 +1577,7 @@
 			
 			// lightbox is about to be closed - callback
 			if(typeof(lcl_ai_opts.on_close) == 'function') {
-				lcl_ai_opts.on_close.call({opts : lcl_ai_opts, vars: lcl_ai_vars});
+				lcl_ai_opts.on_close.call(null, lcl_ai_opts, lcl_ai_vars);
 			}
 			
 			// event on lightbox closing
@@ -1682,7 +1682,7 @@
 			
 			// entering fullscreen - callback
 			if(typeof(o.on_fs_enter) == 'function') {
-				o.on_fs_enter.call({opts : o, vars: v});
+				o.on_fs_enter.call(null, o, v);
 			}
 			
 			// entering fullscreen - action
@@ -1779,7 +1779,7 @@
 			
 			// exiting fullscreen - callback
 			if(typeof(o.on_fs_exit) == 'function') {
-				o.on_fs_exit.call({opts : lcl_ai_opts, vars: lcl_ai_vars});
+				o.on_fs_exit.call(null, lcl_ai_opts, lcl_ai_vars);
 			}
 			
 			// exiting fullscreen - action
@@ -2027,6 +2027,9 @@
 			
 			$('.lcl_tn_inner').stop(true).animate({"scrollLeft" : new_offset}, 500, function() {
 				$('.lcl_tn_inner').trigger('lcl_smoothscroll_end');	
+				
+				// show after having scrolled
+				$('#lcl_thumbs_nav').removeClass('lcl_pre_tn_scroll');
 			});
 			
 			// set selected nav thumb class
@@ -2767,7 +2770,7 @@
 				
 				// slideshow start - callback
 				if(typeof(o.slideshow_start) == 'function') {
-					o.slideshow_start.call({opts : o, vars: lcl_ai_vars});
+					o.slideshow_start.call(null, o, lcl_ai_vars);
 				}
 				
 				// slideshow start - hook | args: interval time
@@ -2803,7 +2806,7 @@
 			
 			// slideshow end - callback
 			if(typeof(o.slideshow_end) == 'function') {
-				o.slideshow_end.call({opts : lcl_ai_opts, vars: lcl_ai_vars});
+				o.slideshow_end.call(null, lcl_ai_opts, lcl_ai_vars);
 			}
 			
 			// slideshow end - hook
