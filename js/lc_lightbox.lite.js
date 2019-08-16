@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.6
+  * @version	: 	1.2.7
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -167,7 +167,7 @@
 			browser_fs_mode : true, // whether to trigger or nor browser fullscreen mode
 			
 			socials			: false, // bool
-			fb_direct_share	: false, // bool / whether to use direct FB contents share (requires APP ID to be specified)  
+			fb_share_params	: false, // bool/string / whether to use direct FB contents share (Read the doc to know what to use) 
 			
 			txt_toggle_cmd	: true, // bool / allow text hiding
 			download		: false, // bool / whether to add download button
@@ -2426,8 +2426,12 @@
 				var code = 
 				'<div class="lcl_socials_tt lcl_tooltip lcl_tt_bottom">';
 				
-					if(lcl_curr_opts.fb_direct_share) {
-						code += '<a class="lcl_icon lcl_fb" href="javascript: void(0)"></a>';	
+					if(lcl_curr_opts.fb_share_params) {
+						var share_url = page_url;
+						share_url += (window.location.href.indexOf('?') === -1) ? '%3F' : '%26';
+						share_url += encodeURIComponent(lcl_curr_opts.fb_share_params.replace('%TITLE%', title).replace('%DESCR%', descr).replace('%IMG%', img)); 
+						
+						code += '<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ share_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=500\');" href="javascript: void(0)"></a>';	
 					} else {
 						code += '<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ page_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=325\');" href="javascript: void(0)"></a>';	
 					}
