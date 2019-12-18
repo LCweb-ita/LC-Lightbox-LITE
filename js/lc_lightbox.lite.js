@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.8
+  * @version	: 	1.2.9
   * @copyright	:	Luca Montanari aka LCweb
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later

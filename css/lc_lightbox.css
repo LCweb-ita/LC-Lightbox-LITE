@@ -247,6 +247,9 @@
 	left: 0;
 	overflow: hidden !important;
 }
+.lcl_on_mobile #lcl_subj {
+	overflow: auto !important;	
+}
 #lcl_subj {
 	z-index: 10;
 }
