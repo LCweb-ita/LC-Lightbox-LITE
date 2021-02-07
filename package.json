@@ -1,7 +1,7 @@
 {
     "author": "LCweb",
     "name": "lc-lightbox-lite",
-    "version": "1.0.4",
+    "version": "1.2.9",
     "description": "Yet another jQuery lightbox.. or not? ",
     "keywords": [
         "jquery",
@@ -28,7 +28,10 @@
         "img",
         "skins"
     ],
-    "dependencies": {},
+    "dependencies": {
+        "alloyfinger": "latest",
+        "jquery": ">=1.7.0"
+    },
     "devDependencies": {},
     "contributors": [
         {
@@ -39,10 +42,6 @@
     "license": "MIT",
     "homepage": "https://lcweb.it/lc-lightbox",
     "bugs": "https://github.com/LCweb-ita/LC-Lightbox-LITE/issues",
-    "dependencies": {
-        "jquery": ">=1.7.0",
-        "alloyfinger": "latest"
-    },
     "_extra": {
         "title": "LC Lightbox LITE",
         "license": {
