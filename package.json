@@ -1,48 +1,71 @@
 {
-  "author": "LCweb",
-  "name": "LC Lightbox LITE",
-  "version": "1.0.4",
-  "description": "Vanilla javascript emoji picker seamlessly attachable to text inputs and textareas",
-  "keywords": [
-    "javascript",
-    "emoji-picker",
-    "vanilla-javascript",
-    "emoji",
-    "javascript-plugin",
-    "emojis",
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LCweb-ita/LC-Lightbox-LITE.git"
-  },
-  "dependencies": {},
-  "devDependencies": {},
-  "contributors": [
-    {
-      "name": "LCweb-ita",
-      "url": "https://github.com/LCweb-ita"
-    },
-  ],
-  "license": "MIT",
-  "homepage": "https://lcweb.it/lc-lightbox",
-  "bugs": "https://github.com/LCweb-ita/LC-Lightbox-LITE/issues",
-  "dependencies": {
-    "jquery": ">=1.7.0",
-	"alloyfinger": "latest"
-  },
-  "_extra": {
-    "title": "LC Lightbox LITE",
-    "license": {
-      "type": "MIT",
-      "url": "https://github.com/LCweb-ita/LC-Lightbox-LITE/blob/main/LICENSE"
-    },
-    "links": {
-      "download": "https://github.com/LCweb-ita/LC-Lightbox-LITE/releases",
-      "docs": "https://lcweb.it/lc-lightbox/documentation"
-    },
-    "main": [
-        "js/lc_lightbox.lite.js",
-        "css/lc_lightbox.css"
+    "author": "LCweb",
+    "name": "lc-lightbox-lite",
+    "version": "1.0.4",
+    "description": "Yet another jQuery lightbox.. or not? ",
+    "keywords": [
+        "jquery",
+        "jquery-plugin",
+        "thumbnails",
+        "fullscreen",
+        "lightbox",
+        "carousel",
+        "lightbox-script",
+        "popup",
+        "touch-events",
+        "lightbox-gallery-plugin",
+        "image-gallary",
+        "jquery-lightbox"
     ],
-  }
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/LCweb-ita/LC-Lightbox-LITE.git"
+    },
+    "files": [
+        "js/lc_lightbox.lite.min.js",
+        "css/lc_lightbox.min.css",
+        "css/fonts",
+        "img",
+        "skins"
+    ],
+    "dependencies": {},
+    "devDependencies": {},
+    "contributors": [
+        {
+            "name": "LCweb-ita",
+            "url": "https://github.com/LCweb-ita"
+        }
+    ],
+    "license": "MIT",
+    "homepage": "https://lcweb.it/lc-lightbox",
+    "bugs": "https://github.com/LCweb-ita/LC-Lightbox-LITE/issues",
+    "dependencies": {
+        "jquery": ">=1.7.0",
+        "alloyfinger": "latest"
+    },
+    "_extra": {
+        "title": "LC Lightbox LITE",
+        "license": {
+            "type": "MIT",
+            "url": "https://github.com/LCweb-ita/LC-Lightbox-LITE/blob/main/LICENSE"
+        },
+        "links": {
+            "download": "https://github.com/LCweb-ita/LC-Lightbox-LITE/releases",
+            "docs": "https://lcweb.it/lc-lightbox/documentation"
+        },
+        "main": [
+            "js/lc_lightbox.lite.min.js",
+            "css/lc_lightbox.min.css",
+            "css/fonts",
+            "img",
+            "skins"
+        ],
+        "files": [
+            "js/lc_lightbox.lite.min.js",
+            "css/lc_lightbox.min.css",
+            "css/fonts",
+            "img",
+            "skins"
+        ]
+    }
 }
