@@ -2,8 +2,8 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.9
-  * @copyright	:	Luca Montanari aka LCweb
+  * @version	: 	1.2.12
+  * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
   
@@ -410,17 +410,20 @@
 			else {var to_preload = '';}
 					
 			if(to_preload && typeof(v.img_sizes_cache[to_preload]) == 'undefined') {
-				$('<img/>').bind("load", function(){ 
-					v.img_sizes_cache[to_preload] = {
-						w : this.width, 
-						h : this.height
-					};
-					
-					// if sizes are zero, recalculate
-					if(show_when_ready && el_index == v.elem_index) {
-						show_element();
-					}
-				}).attr('src', to_preload);
+                let img = new Image();
+                img.src = to_preload;
+
+                img.onload = function(e) {
+                    v.img_sizes_cache[to_preload] = {
+                        w : e.target.width, 
+                        h : e.target.height
+                    };
+
+                    // if sizes are zero, recalculate
+                    if(show_when_ready && el_index == v.elem_index) {
+                        show_element();
+                    }    
+                };
 			}
 			else {
 				if(show_when_ready || typeof(cache_check) != 'undefined') {
@@ -610,7 +613,10 @@
 
 
 			setup_code();
-			touch_events();
+            
+            if(o.touchswipe) {
+			 touch_events();
+            }
 
 			// directly fullscreen?
 			if(v.force_fullscreen) {
@@ -1127,7 +1133,12 @@
 					case 'image' : // discard forced sizes
 						$('#lcl_elem_wrap').css('bottom', 0);
 						
+						// no image found in cache - wait a bit and retry
 						if(typeof(v.img_sizes_cache[ el.src ]) == 'undefined') {
+                            setTimeout(function() {
+                                size_elem(el, flags, txt_und_sizes);  
+                            }, 50);
+                                
 							return false;	
 						}
 						var img_sizes = v.img_sizes_cache[ el.src ];
