@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.12
+  * @version	: 	1.2.13
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -364,7 +364,7 @@
 			}
 			
 			src = src.toLowerCase();
-			var img_regex 	= /^(http|https)?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpe?g|gif|png)$/;
+			var img_regex 	= /^(http|https)?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpe?g|gif|png|webp|avif)$/;
 
 			if(img_regex.test(src)) { // image matching
 				return 'image';	

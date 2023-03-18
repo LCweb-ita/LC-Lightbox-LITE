@@ -19,6 +19,7 @@ Main features
 * Effective Socials Share (with WhatsApp option on mobile)
 * Element Contents (title, description and author)
 * Images "right-click" protection
+* Natively supports webp/avif images
 
 * Fullscreen mode
 	* Covering only browser or entire screen space
