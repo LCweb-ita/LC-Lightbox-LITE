@@ -78,6 +78,9 @@
 	box-shadow: none !important;
 	margin: 3px;	
 }
+.lcl_minimal .lcl_twit:before {
+    background-color: #fafafa;    
+}
 @media screen and (max-width:475px) { 
 	.lcl_minimal #lcl_nav_cmd .lcl_icon {
 		margin: 3px 0;	

@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.2.13
+  * @version	: 	1.3.0
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -113,7 +113,8 @@
 			src_attr		: 'href', // attribute containing element's source
 			title_attr		: 'title', // attribute containing the title - is possible to specify a selector with this syntax: "> .selector" or "> span" 
 			txt_attr		: 'data-lcl-txt', // attribute containing the description - is possible to specify a selector with this syntax: "> .selector" or "> span" 
-			author_attr		: 'data-lcl-author', // attribute containing the author - is possible to specify a selector with this syntax: "> .selector" or "> span" 
+			author_attr		: 'data-lcl-author', // attribute containing the author - is possible to specify a selector with this syntax: "> .selector" or "> span"
+            author_by_txt   : 'by', // which text is used before the author name, by default is "by"
 			
 			slideshow		: true, // whether to enable slideshow
 			open_close_time	: 400, // animation duration for lightbox opening and closing / 1000 = 1sec
@@ -1018,7 +1019,7 @@
 				$('.lcl_txt_toggle').show();
 				
 				if(el.title) 	{$('#lcl_txt').append('<h3 id="lcl_title">'+ el.title +'</h3>');}
-				if(el.author) 	{$('#lcl_txt').append('<h5 id="lcl_author">by '+ el.author +'</h5>');}
+				if(el.author) 	{$('#lcl_txt').append('<h5 id="lcl_author">'+ lcl_settings.author_by_txt +' '+ el.author +'</h5>');}
 				if(el.txt) 		{$('#lcl_txt').append('<section id="lcl_descr">'+ el.txt +'</section>');}
 				
 				// set class for bottom border

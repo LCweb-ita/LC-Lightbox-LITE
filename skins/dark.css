@@ -30,6 +30,9 @@
 .lcl_dark#lcl_wrap:not(.lcl_on_mobile) .lcl_icon:not(.lcl_counter):not(.lcl_zoom_disabled):not(a):hover:before {
 	color: #444;
 }
+.lcl_dark .lcl_twit:before {
+    background-color: #cfcfcf;    
+}
 .lcl_dark.lcl_fullscreen_mode[lcl-type=iframe] #lcl_subj {
 	top: 58px;	
 }

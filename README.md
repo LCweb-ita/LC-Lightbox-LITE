@@ -3,7 +3,7 @@ LC Lightbox is a modern jQuery lightbox focused on contents.<br/>
 Totally responsive and adaptive, is extremely flexible to be tailored in the minimum details!
 
 Hassle-free and immediate setup using an unique javascript file. <br/>
-Overall plugin weight is only 46KB (JS) + 34KB (CSS)
+Overall plugin weight is only 42KB (JS) + 31KB (CSS)
 
 ![lc-lightbox](https://lcweb.it/wp-content/uploads/2018/10/lcl_github_img_2.png)
 
