@@ -602,7 +602,9 @@
 	font-size: 18px;
 	text-indent: -99999px;
 	mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
 	mask-position: center;
+	-webkit-mask-position: center;
 }
 
 
