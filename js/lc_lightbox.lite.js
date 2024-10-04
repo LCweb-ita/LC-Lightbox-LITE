@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.3.1
+  * @version	: 	1.3.2
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -1655,7 +1655,7 @@
 			$('#lcl_wrap').addClass('lcl_toggling_fs');
 			
 			// enbale browser's fs
-			if(o.browser_fs_mode && document.fullscreenEnabled && navigator.userActivation.hasBeenActive) {
+			if(o.browser_fs_mode && document.fullscreenEnabled && typeof(navigator.userActivation) != 'undefined' && navigator.userActivation.hasBeenActive) {
 				if (document.documentElement.requestFullscreen) {
 					document.documentElement.requestFullscreen();
 				} else if (document.documentElement.msRequestFullscreen) {

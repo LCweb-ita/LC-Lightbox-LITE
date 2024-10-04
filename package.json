@@ -1,7 +1,7 @@
 {
     "author": "LCweb",
     "name": "lc-lightbox-lite",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "description": "Yet another jQuery lightbox.. or not? ",
     "keywords": [
         "jquery",
@@ -50,7 +50,7 @@
         },
         "links": {
             "download": "https://github.com/LCweb-ita/LC-Lightbox-LITE/releases",
-            "docs": "https://lcweb.it/lc-lightbox/documentation"
+            "docs": "https://lcweb.it/lc-lightbox-jquery-plugin/documentation/"
         },
         "main": [
             "js/lc_lightbox.lite.min.js",

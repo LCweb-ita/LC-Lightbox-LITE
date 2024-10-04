@@ -13,7 +13,7 @@
     "Luca Montanari (https://lcweb.it)"
   ],
   "license": "MIT",
-  "homepage": "https://lcweb.it/lc-lightbox",
+  "homepage": "https://lcweb.it/lc-lightbox-jquery-plugin/",
   "dependencies": {
     "jquery": ">=1.7.0",
 	"alloyfinger": "latest"
