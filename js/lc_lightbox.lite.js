@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.3.2
+  * @version	: 	1.4.1
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -31,21 +31,21 @@
 	var lb_code =
 	'<div id="lcl_wrap" class="lcl_pre_show lcl_pre_first_el lcl_first_sizing lcl_is_resizing">'+
 		'<div id="lcl_window">'+
-			'<div id="lcl_corner_close" title="close"></div>'+
+			'<a href="javascript:void(0);" id="lcl_corner_close" title="close" aria-label="close" tabindex="300"></a>'+
 			'<div id="lcl_loader" class="lcl_loader_pre_first_el"><span id="lcll_1"></span><span id="lcll_2"></span></div>'+
 			'<div id="lcl_nav_cmd">'+
-				'<div class="lcl_icon lcl_prev" title="previous"></div>'+
-				'<div class="lcl_icon lcl_play"></div>'+
-				'<div class="lcl_icon lcl_next" title="next"></div>'+
+				'<button class="lcl_icon lcl_prev" title="previous" aria-label="previous" tabindex="10"></button>'+
+				'<button class="lcl_icon lcl_play" title="play/pause" aria-label="play/pause" tabindex="20"></button>'+
+				'<button class="lcl_icon lcl_next" title="next" aria-label="next" tabindex="30"></button>'+
 				'<div class="lcl_icon lcl_counter"></div>'+
 
-				'<div class="lcl_icon lcl_right_icon lcl_close" title="close"></div>'+
+				'<button class="lcl_icon lcl_right_icon lcl_close" title="close" tabindex="300"></button>'+
 				
-				'<div class="lcl_icon lcl_right_icon lcl_fullscreen" title="toggle fullscreen"></div>'+
-				'<div class="lcl_icon lcl_right_icon lcl_txt_toggle" title="toggle text"></div>'+
-				'<div class="lcl_icon lcl_right_icon lcl_download" title="download"></div>'+
-				'<div class="lcl_icon lcl_right_icon lcl_thumbs_toggle" title="toggle thumbnails"></div>'+
-				'<div class="lcl_icon lcl_right_icon lcl_socials" title="toggle socials"></div>'+
+				'<button class="lcl_icon lcl_right_icon lcl_fullscreen" title="toggle fullscreen" aria-label="toggle fullscreen" tabindex="100"></button>'+
+				'<button class="lcl_icon lcl_right_icon lcl_txt_toggle" title="toggle text" aria-label="toggle text" tabindex="90"></button>'+
+				'<button class="lcl_icon lcl_right_icon lcl_download" title="download" aria-label="download" tabindex="80"></button>'+
+				'<button class="lcl_icon lcl_right_icon lcl_thumbs_toggle" title="toggle thumbnails" aria-label="toggle thumbnails" tabindex="70"></button>'+
+				'<button class="lcl_icon lcl_right_icon lcl_socials" title="toggle socials" aria-label="toggle socials" tabindex="60"></button>'+
 			'</div>'+
 			'<div id="lcl_contents_wrap">'+
 				'<div id="lcl_subj">'+
@@ -762,7 +762,7 @@
 			if(o.cmd_position == 'inner' && o.ins_close_pos == 'corner') {
 				css += '#lcl_corner_close {'+
 					'top: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerWidth() / 2)) * -1) +'px;'+
-					'right: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerHeight() / 2)) * -1) +';'+
+					'right: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerHeight() / 2)) * -1) +'px;'+
 				'}';
 				
 				
@@ -784,22 +784,22 @@
 				'opacity: '+o.ol_opacity+';'+
 			'}'+
 			'#lcl_window, #lcl_txt, #lcl_subj {'+
-				'-webkit-transition-duration: '+o.animation_time+'ms; transition-duration: '+o.animation_time+'ms;'+	
+				'transition-duration: '+o.animation_time+'ms;'+	
 			'}'+
 			'#lcl_overlay {'+
-				'-webkit-transition-duration: '+o.open_close_time+'ms; transition-duration: '+o.open_close_time+'ms;'+	
+				'transition-duration: '+o.open_close_time+'ms;'+	
 			'}'+
 			'.lcl_first_sizing #lcl_window, .lcl_is_closing #lcl_window {'+
-				'-webkit-transition-duration: '+(o.open_close_time - o.ol_time_diff)+'ms; transition-duration: '+(o.open_close_time - o.ol_time_diff)+'ms;'+	
+				'transition-duration: '+(o.open_close_time - o.ol_time_diff)+'ms;'+	
 			'}'+
 			'.lcl_first_sizing #lcl_window {'+
-				'-webkit-transition-delay: '+o.ol_time_diff+'ms; transition-delay: '+o.ol_time_diff+'ms;'+	
+				'transition-delay: '+o.ol_time_diff+'ms;'+	
 			'}'+
 			'#lcl_loader, #lcl_contents_wrap, #lcl_corner_close {'+
-				'-webkit-transition-duration: '+o.fading_time+'ms; transition-duration: '+o.fading_time+'ms;'+
+				'transition-duration: '+o.fading_time+'ms;'+
 			'}'+
 			'.lcl_toggling_txt #lcl_subj {'+ /* delay to allow sizing on text hiding */
-				'-webkit-transition-delay: '+(o.fading_time + 200)+'ms !important;  transition-delay: '+(o.fading_time + 200)+'ms !important;'+
+				'transition-delay: '+(o.fading_time + 200)+'ms !important;'+
 			'}'+
 			'.lcl_fullscreen_mode.lcl_txt_over:not(.lcl_tn_hidden) #lcl_txt, .lcl_fullscreen_mode.lcl_force_txt_over:not(.lcl_tn_hidden) #lcl_txt {'+ /* fs txt margin when thumbs are shown */
 				'max-height: calc(100% - 42px - '+ o.thumbs_h +'px);'+
@@ -966,6 +966,7 @@
 			//////
 
 			$('#lcl_subj').removeClass('lcl_switching_el');
+            $('#lcl_window').focus();
 		};
 		
 		
@@ -1053,6 +1054,10 @@
 		 */
 		var css_size_to_px = function(size, dimension, ignore_max) {
 			var px = 0; 
+            if(!size) {
+                return px;  
+            }
+            
 			var $wrap = $('#lcl_wrap');
 			
 			var win_w = $(window).width() - parseInt($wrap.css('padding-left'), 10) - parseInt($wrap.css('padding-right'), 10);
@@ -2437,27 +2442,33 @@
 				'<div class="lcl_socials_tt lcl_tooltip lcl_tt_bottom">';
 				
 					if(lcl_curr_opts.fb_share_params) {
+						
 						var share_url = page_url;
 						share_url += (window.location.href.indexOf('?') === -1) ? '%3F' : '%26';
 						share_url += encodeURIComponent(lcl_curr_opts.fb_share_params.replace('%TITLE%', title).replace('%DESCR%', descr).replace('%IMG%', img)); 
 						
-						code += '<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ share_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=500\');" href="javascript: void(0)"></a>';	
+						code += '<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ share_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=500\');" href="javascript: void(0)" title="share on Facebook" aria-label="share on Facebook" tabindex="61"></a>';	
 					} else {
-						code += '<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ page_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=325\');" href="javascript: void(0)"></a>';	
+						code += '<a class="lcl_icon lcl_fb" onClick="window.open(\'https://www.facebook.com/sharer?u='+ page_url +'&display=popup\',\'sharer\',\'toolbar=0,status=0,width=590,height=500\');" href="javascript: void(0)" title="share on Facebook" aria-label="share on Facebook" tabindex="61"></a>';	
 					}
 
-					code += '<a class="lcl_icon lcl_twit" onClick="window.open(\'https://twitter.com/share?text=Check%20out%20%22'+ title +'%22%20@&url='+ page_url +'\',\'sharer\',\'toolbar=0,status=0,width=548,height=325\');" href="javascript: void(0)"></a>';
+					code += '<a class="lcl_icon lcl_twit" onClick="window.open(\'https://twitter.com/share?text=Check%20out%20%22'+ title +'%22%20@&url='+ page_url +'\',\'sharer\',\'toolbar=0,status=0,width=548,height=325\');" href="javascript: void(0)" title="share on X" aria-label="share on X" tabindex="62"></a>';
 					
 					// on mobile - use Whatsapp
 					if(lcl_on_mobile) {
-						code += '<br/><a class="lcl_icon lcl_wa" href="whatsapp://send?text='+ page_url +'" data-action="share/whatsapp/share"></a>'; 	
+						code += '<a class="lcl_icon lcl_wa" href="whatsapp://send?text='+ page_url +'" data-action="share/whatsapp/share" title="share on WhatsApp" aria-label="share on WhatsApp" tabindex="63"></a>'; 	
 					}
-					
+                
 					// pinterest only if there's an image
 					if(img) {
 						code += 	
-						'<a class="lcl_icon lcl_pint" onClick="window.open(\'http://pinterest.com/pin/create/button/?url='+ page_url +'&media='+ encodeURIComponent(img) +'&description='+ title +'\',\'sharer\',\'toolbar=0,status=0,width=575,height=330\');" href="javascript: void(0)"></a>';
+						'<a class="lcl_icon lcl_pint" onClick="window.open(\'http://pinterest.com/pin/create/button/?url='+ page_url +'&media='+ encodeURIComponent(img) +'&description='+ title +'\',\'sharer\',\'toolbar=0,status=0,width=575,height=330\');" href="javascript: void(0)" title="share on Pinterest" aria-label="share on Pinterest" tabindex="64"></a>';
 					}
+                
+                    // allow URL copy for deplinked lightbox
+                    if(lcl_curr_opts.deeplink) {
+                        code += '<a class="lcl_icon lcl_copy_dlu" href="javascript:void(0);" data-action="share/whatsapp/share" title="copy lightbox link" aria-label="copy lightbox link" tabindex="65"></a>';
+                    }
 				
 				code += 	
 				'</div>';
@@ -2601,6 +2612,43 @@
 			}
 		});
 		
+        
+        /* copy lightbox link - share option */
+        $(document).on('click', '.lcl_copy_dlu', function(e) {
+            if(obj != lcl_curr_obj) {return true;}
+            e.preventDefault();
+            
+            navigator.clipboard.writeText(window.location.href);
+            return false;
+        });
+        
+        
+        /* change focus on nav commands */
+        $(document).on('keydown', function(e) {
+            if(obj != lcl_curr_obj) {return true;}
+            
+            if(e.key === "Tab" && $('.lcl_shown').length) {
+                e.preventDefault();
+                
+                let focusableElements = $('#lcl_wrap').find('#lcl_corner_close, #lcl_nav_cmd button.lcl_icon, #lcl_nav_cmd a.lcl_icon').not('.lcl_zoom_disabled, :hidden').sort((a, b) => (a.tabIndex || 0) - (b.tabIndex || 0)),
+                    index = focusableElements.index(document.activeElement);
+
+                index = ((index + 1) >= focusableElements.length) ? 0 : index + 1;
+                focusableElements.eq(index).focus();
+            }
+        });
+        
+        
+        // remove focus status on click to not display the outline
+        $(document).on('mousedown', '#lcl_nav_cmd a, #lcl_nav_cmd button', function(e) {
+            if(obj != lcl_curr_obj) {return true;}
+            
+            const $this = $(this);
+            setTimeout(() => {
+                $(this).blur();
+            }, 5);
+        });
+        
 		
 		/////////////////////////////////////////////////////////////
 		

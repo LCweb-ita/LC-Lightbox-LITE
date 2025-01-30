@@ -58,16 +58,12 @@
 	.lcl_minimal.lcl_inner_cmd:not(.lcl_on_mobile) #lcl_nav_cmd:before,
 	.lcl_minimal.lcl_fullscreen_mode.lcl_outer_cmd:not(.lcl_on_mobile):not([lcl-type=iframe]):not([lcl-type=html]) #lcl_nav_cmd:before {
 		opacity: 0;
-		
-		-webkit-transition: opacity .2s ease-in .5s; 
-		transition: 		opacity .2s ease-in .5s;	
+		transition: opacity .2s ease-in .5s;	
 	}
 	.lcl_minimal:not(.lcl_on_mobile) #lcl_window:hover #lcl_nav_cmd:before,
 	.lcl_minimal.lcl_fullscreen_mode.lcl_outer_cmd:not(.lcl_on_mobile):not([lcl-type=iframe]):not([lcl-type=html]):hover #lcl_nav_cmd:before {
 		opacity: 1;
-		
-		-webkit-transition: all .2s ease-in 0s; 
-		transition: 		all .2s ease-in 0s;
+		transition: all .2s ease-in 0s;
 	}
 }
 .lcl_minimal #lcl_nav_cmd .lcl_icon {
@@ -77,9 +73,6 @@
 	border: none !important;
 	box-shadow: none !important;
 	margin: 3px;	
-}
-.lcl_minimal .lcl_twit:before {
-    background-color: #fafafa;    
 }
 @media screen and (max-width:475px) { 
 	.lcl_minimal #lcl_nav_cmd .lcl_icon {
@@ -138,22 +131,14 @@
 	background: #303030;
     border-color: transparent !important;
     border-radius: 0 !important;
-   
-	-webkit-transform: 	rotate(45deg);
-	-ms-transform: 		rotate(45deg);
-	transform: 			rotate(45deg);
+	transform: rotate(45deg);
 }
 .lcl_minimal #lcl_corner_close:before {
 	color: #eee;
-	
-	-webkit-transform: 	rotate(45deg);
-	-ms-transform: 		rotate(45deg);
-	transform: 			rotate(45deg);
+	transform: rotate(45deg);
 }
 .lcl_minimal:not(.lcl_on_mobile) #lcl_corner_close:hover:before {
-	-webkit-transform: 	rotate(225deg);
-	-ms-transform: 		rotate(225deg);
-	transform: 			rotate(225deg);
+	transform: rotate(225deg);
 }
 
 

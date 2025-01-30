@@ -3,7 +3,7 @@ LC Lightbox is a modern jQuery lightbox focused on contents.<br/>
 Totally responsive and adaptive, is extremely flexible to be tailored in the minimum details!
 
 Hassle-free and immediate setup using an unique javascript file. <br/>
-Overall plugin weight is only 46KB (JS) + 34KB (CSS)
+Overall plugin weight is only 43KB (JS) + 33KB (CSS)
 
 ![lc-lightbox](https://static.lcweb.it/lc-lightbox-lite/lcl_github_img.png)
 
@@ -48,6 +48,7 @@ Main features
 * Adapts to your page's code (you set how lightbox fetches contents from binded elements)
 * Full control on each animation/effect timing
 * Modal mode
+* Supporting aria-labels and tab-to-select-commands accessibility methods
 * Thumbnails script support (eg. easily integrates with Timthumb)
 * MUCH MORE! [check lightbox options](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/?section=opts)
 
