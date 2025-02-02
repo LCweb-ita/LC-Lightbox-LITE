@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.4.1
+  * @version	: 	1.5.0
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -254,6 +254,20 @@
 		};
 	
 		
+        /* get the adopted animation time. Set to zero for mobile devices and fullscren to be swifter */
+        var adjusted_animation_time = function() {
+            var o = lcl_ai_opts;
+            return ($('.lcl_fullscreen_mode').length) ? 0 : o.animation_time;
+        };
+        
+		
+        /* get the adopted animation time. Set to zero for mobile devices and fullscren to be swifter */
+        var adjusted_fading_time = function() {
+            var o = lcl_ai_opts;
+            return ($('.lcl_fullscreen_mode').length) ? 0 : o.fading_time;
+        };
+        
+        
 		/* revert HTML entitles that might have been used in attrs (and trim) */
 		var revert_html_entit = function(str) {
 			if(!str) {return str;}
@@ -784,7 +798,7 @@
 				'opacity: '+o.ol_opacity+';'+
 			'}'+
 			'#lcl_window, #lcl_txt, #lcl_subj {'+
-				'transition-duration: '+o.animation_time+'ms;'+	
+				'transition-duration: '+adjusted_animation_time()+'ms;'+	
 			'}'+
 			'#lcl_overlay {'+
 				'transition-duration: '+o.open_close_time+'ms;'+	
@@ -796,7 +810,7 @@
 				'transition-delay: '+o.ol_time_diff+'ms;'+	
 			'}'+
 			'#lcl_loader, #lcl_contents_wrap, #lcl_corner_close {'+
-				'transition-duration: '+o.fading_time+'ms;'+
+				'transition-duration: '+adjusted_fading_time()+'ms;'+
 			'}'+
 			'.lcl_toggling_txt #lcl_subj {'+ /* delay to allow sizing on text hiding */
 				'transition-delay: '+(o.fading_time + 200)+'ms !important;'+
@@ -1255,7 +1269,7 @@
 			if(typeof(lcl_size_n_show_timeout) != 'undefined') {
 				clearTimeout(lcl_size_n_show_timeout);
 			}
-			var timing = ($('.lcl_first_sizing').length) ? o.open_close_time + 20 : o.animation_time; // +20 trick used to let CSS execute the opening timing
+			var timing = ($('.lcl_first_sizing').length) ? o.open_close_time + 20 : adjusted_animation_time(); // +20 trick used to let CSS execute the opening timing
 			if($('.lcl_browser_resize').length || $('.lcl_toggling_fs').length || fs_mode) {
 				timing = 0;
 			}
@@ -1551,7 +1565,7 @@
 				
 				maybe_preload(true);
 				close_img_preload();
-			}, lcl_ai_opts.fading_time);
+			}, adjusted_fading_time());
 		};
 		
 		
@@ -1568,8 +1582,8 @@
 			var o = lcl_ai_opts;
 			if(!o.progressbar) {return false;}
 			
-			var delay = (first_run) ? 0 : (o.animation_time + o.fading_time);  
-			var time = o.slideshow_time + o.animation_time - delay;
+			var delay = (first_run) ? 0 : (adjusted_animation_time() + adjusted_fading_time());  
+			var time = o.slideshow_time + adjusted_animation_time() - delay;
 			
 			if(!$('#lcl_progressbar').length) {
 				$('#lcl_wrap').append('<div id="lcl_progressbar"></div>');	
@@ -2711,7 +2725,7 @@
 							return false;	
 						}
 
-						var delay = ($(e.target).parents('.lcl_zoomable').length) ? 250 : 0;
+						var delay = ($(e.target).parents('.lcl_zoomable').length) ? adjusted_fading_time() : 0;
 						if(typeof(lcl_swipe_delay) != 'undefined') {clearTimeout(lcl_swipe_delay);}
 						
 						lcl_swipe_delay = setTimeout(function() {

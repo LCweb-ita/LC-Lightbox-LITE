@@ -406,10 +406,14 @@
 .lcl_first_sizing #lcl_nav_cmd,
 .lcl_loading_iframe #lcl_nav_cmd,
 .lcl_loading_videojs #lcl_nav_cmd,
-.lcl_switching_elem #lcl_nav_cmd,
+.lcl_switching_elem:not(.lcl_outer_cmd):not(.lcl_fullscreen_mode) #lcl_nav_cmd,
 .lcl_toggling_txt.lcl_inner_cmd #lcl_nav_cmd,
 .lcl_toggling_fs #lcl_nav_cmd {
 	opacity: 0 !important;	
+}
+.lcl_switching_elem.lcl_outer_cmd #lcl_nav_cmd *:not(.lcl_close),
+.lcl_switching_elem.lcl_fullscreen_mode #lcl_nav_cmd *:not(.lcl_close) {
+    pointer-events: none !important;
 }
 
 #lcl_nav_cmd {
