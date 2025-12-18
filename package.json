@@ -1,8 +1,8 @@
 {
     "author": "LCweb",
     "name": "lc-lightbox-lite",
-    "version": "1.5.0",
-    "description": "Yet another jQuery lightbox.. or not? ",
+    "version": "2.0.0",
+    "description": "LC Lightbox is a gesture-powered, highly customizable jQuery lightbox that supports any type of content",
     "keywords": [
         "jquery",
         "jquery-plugin",

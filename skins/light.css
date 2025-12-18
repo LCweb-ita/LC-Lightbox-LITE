@@ -7,9 +7,18 @@
 .lcl_light .lcl_tooltip {
 	background-color: #fcfcfc;	
 }
-.lcl_light #lcl_subj {
+.lcl_forced_fullscreen #lcl_overlay,
+.lcl_fullscreen_mode #lcl_overlay,
+.lcl_light #lcl_subj,
+.lcl_image_elem:before {
 	background-color: #4e4e4e;	
 }
+.lcl_forced_fullscreen #lcl_overlay,
+.lcl_fullscreen_mode #lcl_overlay {
+    background-image: none;
+    opacity: 1;
+}
+
 .lcl_light #lcl_loader > span {
 	border-color: #aaa #aaa transparent;
 }
@@ -62,6 +71,12 @@
 .lcl_light.lcl_nav_btn_middle .lcl_prev:hover:after {
 	background: rgba(0, 0, 0, 0.3) !important;
 }
+.lcl_light .lcl_counter {
+	font-size: 12px;
+	line-height: 30px;
+	font-family: sans-serif;
+	padding: 0 8px !important;
+}
 @media screen and (min-width:475px) { 
 	.lcl_light .lcl_close {
 		margin-left: 28px !important;
@@ -98,7 +113,7 @@
 
 /* TEXTS */
 .lcl_light #lcl_txt * {
-	font-family: Arial,​ 'sans-serif';	
+	font-family: sans-serif;	
 	color: #2d2d2d;
 }
 .lcl_light #lcl_title {
@@ -158,6 +173,9 @@
 }
 
 /* THUMBS NAVIGATOR */
+.lcl_light .lcl_tn_inner li {
+	border-radius: 3px;	
+}
 .lcl_light #lcl_thumbs_nav span {
 	color: #f5f5f5;
 }

@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	1.5.0
+  * @version	: 	2.0.0
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -16,19 +16,19 @@
 	lcl_shown 		= false; // know whether lightbox is shown
 	lcl_is_active 	= false; // true when lightbox systems are acting (disable triggers)
 	lcl_slideshow	= undefined; // lightbox slideshow - setInterval object
-	lcl_on_mobile	= /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-		
+	lcl_on_mobile   = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0);
+	
 	// static vars avoiding useless parameters usage - related to currently opened lightbox - otherwise they are empty
 	lcl_curr_obj	= false; // store currently active object 
 	lcl_curr_opts 	= false; // currently active instance settings
 	lcl_curr_vars 	= false; // currently active instance settings
 	
-	lcl_deeplink_tracked= false; // flag to track url changes and initial reading once
 	lcl_hashless_url	= false; // page URL without eventual hashes
 	lcl_url_hash		= ''; // URL hashtag
 	
+	
 	// lightbox structure
-	var lb_code =
+	let lb_code =
 	'<div id="lcl_wrap" class="lcl_pre_show lcl_pre_first_el lcl_first_sizing lcl_is_resizing">'+
 		'<div id="lcl_window">'+
 			'<a href="javascript:void(0);" id="lcl_corner_close" title="close" aria-label="close" tabindex="300"></a>'+
@@ -65,10 +65,12 @@
 	// initialization
 	// obj can be an array and overrides elements / [src: url/selector (only required data), title: (string), txt: (string), author: (string), ajax: bool, type: image/frame/text] 
 	lc_lightbox = function(obj, lcl_settings) {
-		if(typeof(obj) != 'string' && (typeof(obj) != 'object' || !obj.length)) {return false;}
+		if(typeof(obj) != 'string' && (typeof(obj) != 'object' || !obj.length)) {
+            return false;
+        }
 
 		// check among already initialized 
-		var already_init = false;
+		let already_init = false;
 		$.each(lcl_objs, function(i, v) {
 			if(JSON.stringify(v) == JSON.stringify(obj)) {
 				already_init = v;
@@ -77,7 +79,7 @@
 		});
 		
 		if(already_init === false) {
-			var instance = new lcl(obj, lcl_settings);
+			const instance = new lcl(obj, lcl_settings);
 			lcl_objs.push(instance);	
 			return instance;
 		}
@@ -89,7 +91,7 @@
 	
 	// destruct method
 	lcl_destroy = function(instance) {
-		var index = $.inArray(instance, lcl_objs);
+		const index = $.inArray(instance, lcl_objs);
 		
 		if(index !== -1) {
 			lcl_objs.splice(index, 1);
@@ -101,21 +103,21 @@
 	
 
 	/* initialize */
-	var lcl = function(obj, settings) {
+	const lcl = function(obj, settings) {
 
-		var lcl_settings = $.extend({
+		let lcl_settings = $.extend({
 			gallery			: true, // whether to display a single element or compose a gallery
 			gallery_hook	: 'rel', // attribute grouping elements - use false to create a gallery with all fetched elements 
 			live_elements	: true, // if a selector is found, set true to handle automatically DOM changes
 			preload_all		: false, // whether to preload all images on document ready
-			global_type		: 'image',
-
+			global_type		: 'image', // force elements type
+			
 			src_attr		: 'href', // attribute containing element's source
 			title_attr		: 'title', // attribute containing the title - is possible to specify a selector with this syntax: "> .selector" or "> span" 
 			txt_attr		: 'data-lcl-txt', // attribute containing the description - is possible to specify a selector with this syntax: "> .selector" or "> span" 
-			author_attr		: 'data-lcl-author', // attribute containing the author - is possible to specify a selector with this syntax: "> .selector" or "> span"
-            author_by_txt   : 'by', // which text is used before the author name, by default is "by"
-			
+			author_attr		: 'data-lcl-author', // attribute containing the author - is possible to specify a selector with this syntax: "> .selector" or "> span" 
+			author_by_txt   : 'by', // which text is used before the author name, by default is "by"
+            
 			slideshow		: true, // whether to enable slideshow
 			open_close_time	: 400, // animation duration for lightbox opening and closing / 1000 = 1sec
 			ol_time_diff	: 100, // overlay's animation advance (on opening) and delay (on close) to window / 1000 = sec
@@ -166,11 +168,11 @@
 			browser_fs_mode : true, // whether to trigger or nor browser fullscreen mode
 			
 			socials			: false, // bool
-			fb_share_params	: false, // bool/string / whether to use direct FB contents share (Read the doc to know what to use) 
+			fb_share_params	: false, // bool/string / whether to use direct FB contents share (Read the doc to know what to use)
 			
 			txt_toggle_cmd	: true, // bool / allow text hiding
 			download		: false, // bool / whether to add download button
-			touchswipe		: true, // bool / Allow touch interactions for mobile (requires AlloyFinger)
+			touchswipe		: true, // bool / Allow touch interactions for mobile
 			mousewheel		: true, // bool / Allow elements navigation with mousewheel
 			modal			: false, // enable modal mode (no closing on overlay click)
 			rclick_prevent	: false, // whether to avoid right click on lightbox
@@ -189,7 +191,7 @@
 
 
 		// Variables accessible globally
-		var lcl_vars = {
+		let lcl_vars = {
 			elems 			: [], // elements object / src: url/text (only required data), title: (string), descr: (string), author: (string), type: image/iframe/text 
 			is_arr_instance	: (typeof(obj) != 'string' && typeof(obj[0].childNodes) == 'undefined') ? true : false,	// true if lightbox is initialized usign direct array immission
 			elems_count		: (typeof(obj) != 'string' && typeof(obj[0].childNodes) == 'undefined') ? obj.length : $(obj).length, // elements count at the moment of lb initialization
@@ -215,8 +217,8 @@
 		
 		
 		// .data() system to avoid issues on multi instances
-		var lcl_ai_opts = $.data(obj, 'lcl_settings', lcl_settings);	
-		var lcl_ai_vars = $.data(obj, 'lcl_vars', lcl_vars);		
+		let lcl_ai_opts = $.data(obj, 'lcl_settings', lcl_settings);	
+		let lcl_ai_vars = $.data(obj, 'lcl_vars', lcl_vars);		
 
 
 		
@@ -225,12 +227,11 @@
 		
 		
 		/* given a string - returns an unique numerical hash */
-		var get_hash = function(str) {
+		const get_hash = function(str) {
 			if(typeof(str) != 'string') {
 				return str;	
 			}
-			
-			var hash = 0, i = 0, len = str.toString().length;
+			let hash = 0, i = 0, len = str.toString().length;
 		  
 			while (i < len) {
 				hash  = ((hash << 5) - hash + str.charCodeAt(i++)) << 0;
@@ -241,8 +242,8 @@
 		
 		
 		/* element already elaborated? check through hash - returns false or elem object */
-		var obj_already_man = function(hash) {
-			var found = false;
+		const obj_already_man = function(hash) {
+			let found = false;
 			
 			$.each(lcl_ai_vars.elems, function(i, v) {
 				if(v.hash == hash) {
@@ -253,41 +254,42 @@
 			return found;
 		};
 	
-		
-        /* get the adopted animation time. Set to zero for mobile devices and fullscren to be swifter */
-        var adjusted_animation_time = function() {
-            var o = lcl_ai_opts;
-            return ($('.lcl_fullscreen_mode').length) ? 0 : o.animation_time;
-        };
         
-		
         /* get the adopted animation time. Set to zero for mobile devices and fullscren to be swifter */
-        var adjusted_fading_time = function() {
-            var o = lcl_ai_opts;
-            return ($('.lcl_fullscreen_mode').length) ? 0 : o.fading_time;
+        const adjusted_animation_time = function() {
+            return (lcl_on_mobile || $('.lcl_fullscreen_mode').length) ? 0 : lcl_ai_opts.animation_time;
         };
         
         
+        
+        /* get the adopted animation time. Set to zero for mobile devices and fullscren to be swifter */
+        const adjusted_fading_time = function() {
+            return ($('.lcl_fullscreen_mode').length) ? 25 : lcl_ai_opts.fading_time;
+        };
+        
+        
+		
 		/* revert HTML entitles that might have been used in attrs (and trim) */
-		var revert_html_entit = function(str) {
-			if(!str) {return str;}
+		const revert_html_entit = function(str) {
+			if(!str) {
+                return str;
+            }
 			
-			str = str.replace(/&lt;/g, '<')
+			return str.replace(/&lt;/g, '<')
 					  .replace(/&gt;/g, '>')
 					  .replace(/&amp;/g, '&')
 					  .replace(/&quot;/g, '"')
-					  .replace(/&#039;/g, "'");
-			return $.trim(str);
+					  .replace(/&#039;/g, "'").trim();
 		};
 		
 		
+        
 		/* returns title/text/author detecting whether to get an attribute or selector */
-		var attr_or_selector_data = function($elem, subj_key) {
-			var o = lcl_ai_opts;
-			var subj = o[subj_key];
+		const attr_or_selector_data = function($elem, subj_key) {
+			const subj = lcl_ai_opts[subj_key];
 			
 			if(subj.indexOf('> ') !== -1) {
-				return ($elem.find( subj.replace('> ', '') ).length) ? $.trim( $elem.find( subj.replace('> ', '') ).html()) : '';
+				return ($elem.find( subj.replace('> ', '') ).length) ? $elem.find( subj.replace('> ', '') ).html().trim() : '';
 			} 
 			else {
 				return (typeof($elem.attr( subj )) != 'undefined') ? revert_html_entit( $elem.attr( subj )) : '';	
@@ -297,34 +299,33 @@
 				
 					
 		/* elaborate binded elements */
-		var setup_elems_obj = function($subj) {
-			var o = lcl_ai_opts;
+		const setup_elems_obj = function($subj) {
+			const o = lcl_ai_opts;
 
 			// [src: url/selector (only required data), title: (string), descr: (string), author: (string), ajax: bool, type: image/frame/text] 
-			var new_elems = []; 
+			let new_elems = []; 
 			$subj.each(function() {
-				var $e 	 = $(this); 
-				var src  = $e.attr( o.src_attr );
-				var hash = get_hash(src);
+				const $e    = $(this),
+                      src   = $e.attr(o.src_attr),
+                      hash  = get_hash(src);
 				
 				// check against gallery hook
 				if(lcl_ai_vars.gallery_hook_val && $e.attr(o.gallery_hook) != lcl_ai_vars.gallery_hook_val) {
 					return true;
 				}
 				
-				var already_man = obj_already_man(hash);
-				if(already_man) {
-					var el = already_man; 	
-				}
-				else {
-					var type = el_type_finder(src, $e.data('lcl-type'));  
+				const already_man = obj_already_man(hash);
+                let el = already_man;
+                
+				if(!already_man) {
+					const type = el_type_finder(src, $e.data('lcl-type'));  
 						
 					// compose
 					if(type != 'unknown') {
-						var el = {
+				        el = {
 							src 	: src,
 							type 	: type,
-							hash	: (o.deeplink) 		? get_hash(src) : false,
+							hash	: false,
 							title 	: (o.show_title) 	? attr_or_selector_data($e, 'title_attr') : '',	
 							txt 	: (o.show_descr) 	? attr_or_selector_data($e, 'txt_attr') : '',	
 							author 	: (o.show_author) 	? attr_or_selector_data($e, 'author_attr') : '',	
@@ -335,20 +336,20 @@
 		
 							force_over_data	: (typeof($e.data('lcl-force-over-data')) != 'undefined') 	? parseInt($e.data('lcl-force-over-data'), 10) : '',   
 							force_outer_cmd : (typeof($e.data('lcl-outer-cmd')) != 'undefined') 		? $e.data('lcl-outer-cmd') : '',
+							canonical_url	: (typeof($e.data('lcl-canonical-url')) != 'undefined') 	? $e.data('lcl-canonical-url') : '',
 						};
+						
 						
 						// download attribute
 						if(type == 'image') {
 							el.download = (typeof($e.data('lcl-path')) != 'undefined') ? $e.data('lcl-path') : src; 	
-						} else {
-							el.download = false;
 						}
 					}
 					else {
-						var el = {
+				        el = {
 							src 	: src,
 							type 	: type,
-							hash	: (o.deeplink) ? get_hash(src) : false
+							hash	: false
 						};
 					}
 				}
@@ -372,20 +373,11 @@
 
 
 		/* given element source - return its type | accepts type forcing */
-		var el_type_finder = function(src, forced_type) {
+		const el_type_finder = function(src, forced_type) {
 			if(typeof(forced_type) == 'undefined') {
 				forced_type = lcl_ai_opts.global_type;
-				return forced_type;
 			}
-			
-			src = src.toLowerCase();
-			var img_regex 	= /^(http|https)?:\/\/(?:[a-z\-]+\.)+[a-z]{2,6}(?:\/[^\/#?]+)+\.(?:jpe?g|gif|png|webp|avif)$/;
-
-			if(img_regex.test(src)) { // image matching
-				return 'image';	
-			}
-	
-			return 'unknown';
+			return 'image';
 		};
 		
 		
@@ -393,11 +385,12 @@
 		
 		
 		/* smart images preload */
-		var close_img_preload = function() {
-			if(lcl_ai_vars.elems.length < 2 || !lcl_ai_opts.gallery) {return false;}
-
+		const close_img_preload = function() {
+			if(lcl_ai_vars.elems.length < 2 || !lcl_ai_opts.gallery) {
+                return false;
+            }
+            
 			if(lcl_ai_vars.elem_index > 0) { // prev
-
 				maybe_preload(false, (lcl_ai_vars.elem_index - 1));	
 			}
 			if(lcl_ai_vars.elem_index != (lcl_ai_vars.elems.length - 1)) { // next
@@ -406,10 +399,11 @@
 		};
 
 
+        
 		/* preload images and eventually trigger showing function - if index not specified, loads current index */
-		var maybe_preload = function(show_when_ready, el_index, cache_check) {
-			var v = lcl_ai_vars;
-
+		const maybe_preload = function(show_when_ready, el_index, cache_check) {
+			let v = lcl_ai_vars;
+            
 			// if forced index is missing - use current one
 			if(typeof(el_index) == 'undefined') {
 				el_index = v.elem_index;	
@@ -417,28 +411,40 @@
 			if(typeof(el_index) == 'undefined') { // if lightbox has alraedy been closed
 				return false;	
 			}
-			
+
 			// is a preloadable element?
+            let to_preload = '';
 			if(v.elems[el_index].type == 'image') {
-				var to_preload = (v.elems[el_index].type == 'image') ? v.elems[el_index].src : v.elems[el_index].poster;  
+                to_preload = (v.elems[el_index].type == 'image') ? v.elems[el_index].src : v.elems[el_index].poster;  
 			}
-			else {var to_preload = '';}
 					
 			if(to_preload && typeof(v.img_sizes_cache[to_preload]) == 'undefined') {
-                let img = new Image();
+				let img = new Image();
                 img.src = to_preload;
 
-                img.onload = function(e) {
+                const onReady = function(e) {
                     v.img_sizes_cache[to_preload] = {
-                        w : e.target.width, 
-                        h : e.target.height
+                        w: e.target.naturalWidth || e.target.width,
+                        h: e.target.naturalHeight || e.target.height
                     };
 
-                    // if sizes are zero, recalculate
-                    if(show_when_ready && el_index == v.elem_index) {
-                        show_element();
-                    }    
+                    // help chrome rendering the image faster
+                    if(show_when_ready && el_index == v.elem_index){
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                show_element();
+                            });
+                        });
+                    }
                 };
+
+                if(img.decode){
+                    img.decode().then(() => onReady({ target: img })).catch(() => {
+                        img.onload = onReady;
+                    });
+                } else {
+                    img.onload = onReady;
+                }
 			}
 			else {
 				if(show_when_ready || typeof(cache_check) != 'undefined') {
@@ -449,27 +455,58 @@
 				}
 			}
 		};
+
+		
+        
+		// iframes preload - wait until it is loaded
+		const iframes_preload = function() {
+			const $subj = $('#lcl_wrap[lc-lelem='+ lcl_ai_vars.elem_index +'] #lcl_elem_wrap > iframe');
+			if(!$subj.length) {
+                return false;
+            }
+			
+			$('#lcl_wrap').addClass('lcl_loading_iframe');
+			temp_slideshow_stop();
+			
+			$subj.on('load', function() {
+				$('#lcl_wrap').removeClass('lcl_loading_iframe');
+				
+				// set focus to allow scroll
+				setTimeout(function() {
+					if($('iframe.lcl_elem').length) {
+						$('iframe.lcl_elem')[0].contentWindow.focus();
+					}
+				}, 20);
+
+				// restart slideshow
+				if($('.lcl_is_playing').length) {
+					lcl_start_slideshow(true);	
+				}
+			});
+		};
 		
 		
 		/////////////
 		
 		
 		/* elements parsing */
-		var elems_parsing = function(inst_obj, $clicked_obj) {
-			var o = $.data(inst_obj, 'lcl_settings');
-			var vars = $.data(inst_obj, 'lcl_vars');
+		const elems_parsing = function(inst_obj, $clicked_obj) {
+			const o = $.data(inst_obj, 'lcl_settings');
+			let vars = $.data(inst_obj, 'lcl_vars');
 
 			// direct array initialization - validate and setup hashes
 			if(vars.is_arr_instance) {
-				var elems = [];
+				let elems = [];
 				
 				$.each(inst_obj, function(i,v) {
-					var el = {};
+					let el = {};
 					
-					var el_type = (typeof(v.type) == 'undefined' && o.global_type) ? o.global_type : false;
-					if(typeof(v.type) != 'undefined') {el_type = v.type;} 
+					let el_type = (typeof(v.type) == 'undefined' && o.global_type) ? o.global_type : false;
+					if(typeof(v.type) != 'undefined') {
+                        el_type = v.type;
+                    } 
 					
-					if(el_type && $.inArray(el_type, ['image']) !== -1) {
+					if(el_type && ['image'].includes(el_type)) {
 						if(typeof(v.src) != 'undefined' && v.src) {
 							el.src 		= v.src;
 							el.type 	= el_type;
@@ -484,25 +521,26 @@
 							
 							el.force_over_data 	= (typeof(v.force_over_data) == 'undefined') ? false : parseInt(v.force_over_data, 10);
 							el.force_outer_cmd 	= (typeof(v.force_outer_cmd) == 'undefined') ? false : v.force_outer_cmd;
-
+							el.canonical_url 	= (typeof(v.canonical_url) == 'undefined') ? false : v.canonical_url;
+							
 							el.thumb 	= (typeof(v.thumb) == 'undefined') ? false : v.thumb;
-
-
+		
+		
 							// download calculate type and parameter
 							if(el_type == 'image') {
 								el.download = (typeof(v.download) != 'undefined') ? v.download : v.src; 	
-							} else {
-								el.download = false;
-							}
-							
+							} 
+                            
+							el.poster = (el_type == 'image') ? '' : v.poster;
+
 							elems.push(el);	
 						}
 					}
 					else {
-						var el = {
+						el = {
 							src 	: el.src,
 							type 	: 'unknown',
-							hash	: (o.deeplink) ? get_hash(el.src) : false
+							hash	: false
 						};
 						elems.push(el);	
 					}
@@ -514,13 +552,13 @@
 			
 			// if is from DOM object - prepare elements object	
 			else {	
-				var $subj = inst_obj;
+				let $subj = inst_obj;
 
 				// can fetch elements in real-time? save selector
 				if(o.live_elements && vars.elems_selector) {
-					var consider_group = ($clicked_obj && o.gallery && o.gallery_hook && typeof($(obj[0]).attr(o.gallery_hook)) != 'undefined') ? true : false;
+					const consider_group = ($clicked_obj && o.gallery && o.gallery_hook && typeof($(obj[0]).attr(o.gallery_hook)) != 'undefined') ? true : false
 					
-					var sel = (consider_group) ? vars.elems_selector +'['+ o.gallery_hook +'='+ $clicked_obj.attr( o.gallery_hook ) +']' : vars.elems_selector;
+					const sel = (consider_group) ? vars.elems_selector +'['+ o.gallery_hook +'='+ $clicked_obj.attr( o.gallery_hook ) +']' : vars.elems_selector;
 					$subj = $(sel);
 				}
 				
@@ -553,7 +591,7 @@
 			
 			// elements parsed | args: elements array
 			if(!vars.is_arr_instance) {
-				var $subj = (vars.elems_selector) ? $(vars.elems_selector) : inst_obj;
+				const $subj = (vars.elems_selector) ? $(vars.elems_selector) : inst_obj;
 				$subj.first().trigger('lcl_elems_parsed', [vars.elems]);
 			}
 
@@ -568,8 +606,11 @@
 		
 		
 		/* open lightbox */
-		var open_lb = function(inst_obj, $clicked_obj) {
-			if(lcl_shown || lcl_is_active) {return false;}
+		const open_lb = function(inst_obj, $clicked_obj) {
+			if(lcl_shown || lcl_is_active) {
+                return false;
+            }
+            
 			lcl_shown = true;
 			lcl_is_active = true;
 			
@@ -581,11 +622,11 @@
 			lcl_curr_opts = lcl_ai_opts;
 			lcl_curr_vars = lcl_ai_vars;
 			
-			var o = lcl_ai_opts;
-			var v = lcl_ai_vars;
-			var $co = (typeof($clicked_obj) != 'undefined') ? $clicked_obj : false;
-
-
+			const o = lcl_ai_opts,
+                  $co = (typeof($clicked_obj) != 'undefined') ? $clicked_obj : false;
+            
+			let v = lcl_ai_vars;
+            
 			// check instance existence
 			if(!lcl_ai_vars) {
 				console.error('LC Lightbox - cannot open. Object not initialized');
@@ -613,7 +654,7 @@
 				
 			}
 			
-			// array or deeplink initialization - check index existence
+			// array initialization - check index existence
 			else {
 				if(parseInt(v.elem_index, 10) >= v.elems_count) {
 					console.error('LC Lightbox - selected index does not exist');
@@ -625,19 +666,18 @@
 			maybe_preload(false);
 			
 			// setup lightbox code
-
-
 			setup_code();
             
-            if(o.touchswipe) {
-			 touch_events();
+            if((o.touchswipe)) {
+                touch_events();
             }
 
 			// directly fullscreen?
 			if(v.force_fullscreen) {
+                $('#lcl_wrap').addClass('lcl_pre_forced_fs_first_elem');
 				enter_fullscreen(true, true);
 			}
-			
+            
 			// prepare thumbs nav
 			if($('#lcl_thumbs_nav').length) {
 				setup_thumbs_nav();	
@@ -646,34 +686,32 @@
 			// prepare first element and show
 			maybe_preload(true);
 			close_img_preload();
+            
+            $('#lcl_nav_cmd').focus();
 		};
 		
 		
+        
 		/* remove lightbox pre-show classes */
-		var rm_pre_show_classes = function() {
+		const rm_pre_show_classes = function() {
 			// show window and overlay 
 			$('#lcl_wrap').removeClass('lcl_pre_show').addClass('lcl_shown');
 			$('#lcl_loader').removeClass('lcl_loader_pre_first_el');
 		};
 		
 
+        
 		/* setup lightbox code */	
-		var setup_code = function() {
-			var o = lcl_ai_opts;
-			var v = lcl_ai_vars;
+		const setup_code = function() {
+			const o = lcl_ai_opts;
+            
+			let v = lcl_ai_vars,
+                wrap_classes = [],
+                css = '';
 			
-			var wrap_classes = [];
-			var css = '';
-			
-			// add class if IE <= 11 and  for commands positions
-			if(typeof(document.documentMode) == 'number') {
-				$('body').addClass('lcl_old_ie');
-				
-				// actually disable middle nav
-				if(o.cmd_position != 'outer') {o.nav_btn_pos = 'normal';}	
-			}
-			
-			if($('#lcl_wrap').length) {$('#lcl_wrap').remove();}
+			if($('#lcl_wrap').length) {
+                $('#lcl_wrap').remove();
+            }
 			$('body').append(lb_code);	
 			
 			
@@ -706,15 +744,19 @@
 			}
 			
 			// mobile class
-			if(lcl_on_mobile) {wrap_classes.push('lcl_on_mobile');}
+			if(lcl_on_mobile) {
+                wrap_classes.push('lcl_on_mobile');
+            }
 			
 			// custom classes
-			if(o.wrap_class) {wrap_classes.push(o.wrap_class);}
+			if(o.wrap_class) {
+                wrap_classes.push(o.wrap_class);
+            }
 			
 			// manage elements
 			wrap_classes.push('lcl_'+ o.cmd_position +'_cmd');
 			if(o.cmd_position != 'inner') {
-				var nav = $('#lcl_nav_cmd').detach();
+				const nav = $('#lcl_nav_cmd').detach();
 				$('#lcl_wrap').prepend(nav);	
 			}
 			
@@ -750,8 +792,8 @@
 			else {
 				$('#lcl_thumbs_nav').css('height', o.thumbs_h); // use JS to pick outerHeight after
 				
-				var th_margins = $('#lcl_thumbs_nav').outerHeight(true) - o.thumbs_h; 
-				css += '#lcl_window {margin-top: '+ ((o.thumbs_h - th_margins ) * -1) +'px;}';
+				const th_margins = $('#lcl_thumbs_nav').outerHeight(true) - o.thumbs_h; 
+				css += '#lcl_wrap:not(.lcl_toggling_fs):not(.lcl_forced_fullscreen) #lcl_window {margin-top: '+ ((o.thumbs_h - th_margins ) * -1) +'px;}';
 				
 				// center lightbox if cmds are on top and thumbs are hidden
 				css += '.lcl_tn_hidden.lcl_outer_cmd:not(.lcl_fullscreen_mode) #lcl_window {margin-bottom: '+ ($('.lcl_close').outerHeight(true) * -1) +'px;}';	
@@ -762,8 +804,6 @@
 			// apply skin and layout
 			wrap_classes.push('lcl_txt_'+ o.data_position +' lcl_'+ o.skin);
 
-			css += '#lcl_overlay {background-color: '+ o.thumbs_h +'px; opacity: '+ o.ol_opacity +';}';
-			
 			if(o.ol_pattern) 	{$('#lcl_overlay').addClass('lcl_pattern_'+ o.ol_pattern);}
 			if(o.modal)			{$('#lcl_overlay').addClass('lcl_modal');}
 			
@@ -774,22 +814,54 @@
 			if(o.shadow) 		{css += '#lcl_window {box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);}';}
 			
 			if(o.cmd_position == 'inner' && o.ins_close_pos == 'corner') {
-				css += '#lcl_corner_close {'+
-					'top: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerWidth() / 2)) * -1) +'px;'+
-					'right: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerHeight() / 2)) * -1) +'px;'+
-				'}';
+				css += 
+                    '#lcl_corner_close {'+
+                        'top: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerWidth() / 2)) * -1) +'px;'+
+                        'right: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerHeight() / 2)) * -1) +'px;'+
+                    '}';
 				
 				
 				// if no button is in inner cmd w/ corner close - hide bar (not on FS)
 				if(!$('#lcl_nav_cmd > *:not(.lcl_close)').length) {
-					css += '#lcl_wrap:not(.lcl_fullscreen_mode):not(.lcl_forced_outer_cmd) #lcl_nav_cmd {'+
-						'display: none;'+
-					'}';	
+					css += 
+                        '#lcl_wrap:not(.lcl_fullscreen_mode):not(.lcl_forced_outer_cmd) #lcl_nav_cmd {'+
+                            'display: none;'+
+                        '}';	
 				}
 			}
+            
+            if(['rside', 'lside'].includes(o.data_position) && (o.animation_time - 20) < 300) {
+                css += 
+                    '.lcl_txt_rside:not(.lcl_force_txt_over) #lcl_txt,'+
+                    '.lcl_txt_lside:not(.lcl_force_txt_over) #lcl_txt {'+
+                        'transition-duration: '+ (o.animation_time - 20) +'ms;'+
+                    '}';
+            }
+            
+            if(o.remove_scrollbar) {
+                lcl_ai_vars.html_style = (typeof(jQuery('html').attr('style')) != 'undefined') ? jQuery('html').attr('style') : '';
+				lcl_ai_vars.body_style = (typeof(jQuery('body').attr('style')) != 'undefined') ? jQuery('body').attr('style') : '';
+				
+				// avoid page scrolling and maintain contents position
+				const orig_page_w = $(window).width();
+				$('html').css('overflow', 'hidden');
+				
+				$('html').css({
+					'margin-right' 	: ($(window).width() - orig_page_w),
+					'touch-action'	: 'none'
+				});
+
+				$('body').css({
+					'overflow' 		: 'visible',
+					'touch-action'	: 'none'	
+				});
+            }
+            
 
 			// custom CSS
-			if($('#lcl_inline_style').length) {$('#lcl_inline_style').remove();}
+			if($('#lcl_inline_style').length) {
+                $('#lcl_inline_style').remove();
+            }
 			$('head').append(
 			'<style type="text/css" id="lcl_inline_style">'+
 			css +
@@ -798,7 +870,10 @@
 				'opacity: '+o.ol_opacity+';'+
 			'}'+
 			'#lcl_window, #lcl_txt, #lcl_subj {'+
-				'transition-duration: '+adjusted_animation_time()+'ms;'+	
+				'transition-duration: '+ o.animation_time +'ms;'+	
+			'}'+  
+            '.lcl_toggling_txt #lcl_window, .lcl_toggling_txt #lcl_subj {'+
+				'transition-duration: '+ o.animation_time +'ms !important;'+	
 			'}'+
 			'#lcl_overlay {'+
 				'transition-duration: '+o.open_close_time+'ms;'+	
@@ -817,37 +892,12 @@
 			'}'+
 			'.lcl_fullscreen_mode.lcl_txt_over:not(.lcl_tn_hidden) #lcl_txt, .lcl_fullscreen_mode.lcl_force_txt_over:not(.lcl_tn_hidden) #lcl_txt {'+ /* fs txt margin when thumbs are shown */
 				'max-height: calc(100% - 42px - '+ o.thumbs_h +'px);'+
-			'}'+
-			'.lcl_fullscreen_mode.lcl_playing_video.lcl_txt_over:not(.lcl_tn_hidden) #lcl_txt,'+
-			'.lcl_fullscreen_mode.lcl_playing_video.lcl_force_txt_over:not(.lcl_tn_hidden) #lcl_txt {'+ /* fullscreen txt over margin when thumbs are shown */
-				'max-height: calc(100% - 42px - 45px - '+ o.thumbs_h +'px);'+
 			'}</style>');
 						
 			//////
-			
-			// backup html/body inline CSS
-			if(o.remove_scrollbar) {
-				lcl_ai_vars.html_style = (typeof(jQuery('html').attr('style')) != 'undefined') ? jQuery('html').attr('style') : '';
-				lcl_ai_vars.body_style = (typeof(jQuery('body').attr('style')) != 'undefined') ? jQuery('body').attr('style') : '';
-				
-				// avoid page scrolling and maintain contents position
-				var orig_page_w = $(window).width();
-				$('html').css('overflow', 'hidden');
-				
-				$('html').css({
-					'margin-right' 	: ($(window).width() - orig_page_w),
-					'touch-action'	: 'none'
-				});
-
-				$('body').css({
-					'overflow' 		: 'visible',
-					'touch-action'	: 'none'	
-				});
-			}
-	
 	
 			// opening element could already be shaped?
-			var el = lcl_ai_vars.elems[v.elem_index];
+			const el = lcl_ai_vars.elems[v.elem_index];
 			if(el.type != 'image' || (el.type == 'image' && typeof(v.img_sizes_cache[el.src]) != 'undefined')) {
 				wrap_classes.push('lcl_show_already_shaped');
 			} else {
@@ -868,18 +918,21 @@
 			
 			// lightbox html has been appended and managed 
 			if(!lcl_ai_vars.is_arr_instance) {
-				var $subj = (lcl_ai_vars.elems_selector) ? $(lcl_ai_vars.elems_selector) : lcl_curr_obj;
+				const $subj = (lcl_ai_vars.elems_selector) ? $(lcl_ai_vars.elems_selector) : lcl_curr_obj;
 				$subj.first().trigger('lcl_html_is_ready', [lcl_ai_opts, lcl_ai_vars]);
 			}
+            
+            
+            drag_n_drop_nav();
 		};
 		
 		
 		
 		// prevent page touch scroll while moving a specific element
-		var no_body_touch_scroll = function(selector) {
+		const no_body_touch_scroll = function(selector) {
 
-			var _overlay = $(selector)[0];
-			var _clientY = null; // remember Y position on touch start
+			const _overlay = $(selector)[0];
+			let _clientY = 0; // remember Y position on touch start
 		
 			_overlay.addEventListener('touchstart', function (event) {
 				if (event.targetTouches.length === 1) {
@@ -896,7 +949,7 @@
 			}, false);
 		
 			function disableRubberBand(event) {
-				var clientY = event.targetTouches[0].clientY - _clientY;
+				clientY = event.targetTouches[0].clientY - _clientY;
 		
 				if (_overlay.scrollTop === 0 && clientY > 0) {
 					// element is at the top of its scroll
@@ -918,11 +971,15 @@
 
 
 		/* show element in lightbox */
-		var show_element = function() {
-			if(!lcl_shown) {return false;}
+		const show_element = function() {
+			if(!lcl_shown) {
+                return false;
+            }
 			
-			var v = lcl_ai_vars;
-			var el = v.elems[v.elem_index];	
+			let v = lcl_ai_vars,
+                $subj;
+            
+			const el = v.elems[v.elem_index];	
 			
 			$('#lcl_wrap').attr('lc-lelem', v.elem_index);
 			
@@ -948,7 +1005,7 @@
 			
 			// trigger right before EVERY element showing | args: element index, element object
 			if(!v.is_arr_instance) {
-				var $subj = (v.elems_selector) ? $(v.elems_selector) : lcl_curr_obj;
+				$subj = (v.elems_selector) ? $(v.elems_selector) : lcl_curr_obj;
 				$subj.first().trigger('lcl_before_show', [el, v.elem_index]);
 			}
 			
@@ -967,7 +1024,7 @@
 				
 				// first element show | args: element
 				if(!v.is_arr_instance) {
-					var $subj = (v.elems_selector) ? $(v.elems_selector) : lcl_curr_obj;
+					$subj = (v.elems_selector) ? $(v.elems_selector) : lcl_curr_obj;
 					$subj.first().trigger('lcl_on_open', [el, v.elem_index]);
 				}
 			}
@@ -979,21 +1036,23 @@
 
 			//////
 
-			$('#lcl_subj').removeClass('lcl_switching_el');
+            $('.lcl_pre_forced_fs_first_elem').removeClass('lcl_pre_forced_fs_first_elem');
+			$('#lcl_subj').removeClass('lcl_switching_elem');
             $('#lcl_window').focus();
 		};
 		
 		
 		
 		/* element has text ? */
-		var elem_has_txt = function(el) {
+		const elem_has_txt = function(el) {
 			return (el.title || el.txt || el.author) ? true : false;	
 		};
 		
+        
 		
 		/* populate lightbox */
-		var populate_lb = function(el){
-			var el_index = lcl_ai_vars.elem_index;
+		const populate_lb = function(el){
+			const el_index = lcl_ai_vars.elem_index;
 			
 			// reset
 			$('#lcl_elem_wrap').removeAttr('style').removeAttr('class').empty();
@@ -1005,7 +1064,7 @@
 			// setup subect
 			switch(el.type) {
 				case 'image' :
-					$('#lcl_elem_wrap').css('background-image', 'url(\''+ el.src +'\')');
+                    $('#lcl_elem_wrap').css('background-image', 'url(\''+ el.src +'\')').html('<img src="'+ el.src +'" draggable="false" />');
 					break;
 				
 				default : // error message size
@@ -1013,14 +1072,22 @@
 					break; 
 			}
 			
+			// preload iframes
+			if(['image'].includes(el.type)) {
+				iframes_preload();	
+			}
+			
+			
 			if(lcl_curr_opts.download) {
 				if(el.download) {
 					$('.lcl_download').show();
 					
-					var arr = el.download.split('/');
-					var filename = arr[ (arr.length -1) ];
+					const arr = el.download.split('/'),
+                          filename = arr[ (arr.length -1) ];
+                    
 					$('.lcl_download').html('<a href="'+ el.download +'" target="_blank" download="'+ filename +'"></a>');
-				} else {
+				}
+                else {
 					$('.lcl_download').hide();	
 				}
 			}
@@ -1061,27 +1128,27 @@
 			no_body_touch_scroll('#lcl_txt');
 		};
 		
+        
 		
 		/* 
 		 * given a CSS size (integer (px), %, vw or vh) returns the related pixel value 
 		 * dimension = w or h
 		 */
-		var css_size_to_px = function(size, dimension, ignore_max) {
-			var px = 0; 
+		const css_size_to_px = function(size, dimension, ignore_max) {
+			let px = 0; 
             if(!size) {
                 return px;  
             }
             
-			var $wrap = $('#lcl_wrap');
-			
-			var win_w = $(window).width() - parseInt($wrap.css('padding-left'), 10) - parseInt($wrap.css('padding-right'), 10);
-			var win_h = $(window).height() - parseInt($wrap.css('padding-top'), 10) - parseInt($wrap.css('padding-bottom'), 10);
+			const $wrap = $('#lcl_wrap'),
+                  win_w = $(window).width() - parseInt($wrap.css('padding-left'), 10) - parseInt($wrap.css('padding-right'), 10),
+                  win_h = $(window).height() - parseInt($wrap.css('padding-top'), 10) - parseInt($wrap.css('padding-bottom'), 10);
 			
 			if(!isNaN(parseFloat(size)) && isFinite(size)) { // integer value
 				px = parseInt(size, 10);	
 			}
 			else if	(size.toString().indexOf('%') !== -1) {
-				var val = (dimension == 'w') ? win_w : win_h;
+				const val = (dimension == 'w') ? win_w : win_h;
 				px = val * (parseInt(size, 10) / 100);	
 			}
 			else if	(size.toString().indexOf('vw') !== -1) {
@@ -1100,139 +1167,126 @@
 		};
 		
 	
+        
 		/* set element sizes */
-		var size_elem = function(el, flags, txt_und_sizes) { // flags: no_txt_under, inner_cmd_checked
-			var o = lcl_ai_opts;
-			var v = lcl_ai_vars;
-			var w, h;
+        const size_elem = function(el, flags) { // flags: no_txt_under, inner_cmd_checked
+            const o = lcl_ai_opts,
+                  fs_mode = ($('.lcl_fullscreen_mode, .lcl_forced_fullscreen').length) ? true : false,
+                  add_space = (fs_mode) ? 0 : ((parseInt(o.border_w, 10) * 2) + (parseInt(o.padding, 10) * 2));
 
-			if(typeof(flags) == 'undefined') {flags = {};}
-			var fs_mode = ($('.lcl_fullscreen_mode').length) ? true : false;
-			
-			// calculate padding and borders
-			var add_space = (fs_mode) ? 0 : ((parseInt(o.border_w, 10) * 2) + (parseInt(o.padding, 10) * 2));
-			
-			// is side-text layout? remove forced on hover 
-			if(typeof(flags.side_txt_checked) == 'undefined' && (typeof(flags.no_txt_under) == 'undefined' || !flags.no_txt_under)) {
-				$('#lcl_wrap').removeClass('lcl_force_txt_over');
-			}
-			var side_txt = (!$('.lcl_force_txt_over').length && !$('.lcl_hidden_txt').length && $.inArray(o.data_position, ['rside', 'lside']) !== -1 && elem_has_txt(el)) ? $('#lcl_txt').outerWidth() : 0;
+            let v = lcl_ai_vars,
+                img_sizes,
+                w, h;
 
-			// has thumbs nav?
-			var thumbs_nav = (!fs_mode && $('#lcl_thumbs_nav').length && !$('.lcl_tn_hidden').length) ? $('#lcl_thumbs_nav').outerHeight(true) - parseInt($('#lcl_wrap').css('padding-bottom'), 10) : 0;
-			
-			// outer commands?
-			var cmd_h = (!fs_mode && $('.lcl_outer_cmd').length) ? $('.lcl_close').outerHeight(true) + parseInt($('#lcl_nav_cmd').css('padding-top'), 10) + parseInt($('#lcl_nav_cmd').css('padding-bottom'), 10) : 0;
-			
-			// wrap-up px to remove
-			var horiz_add_space = add_space + side_txt;
-			var vert_add_space = add_space + thumbs_nav + cmd_h;
-			
-			// calculate max sizes
-			var max_w_attr = $('#lcl_wrap').attr('data-lcl-max-w');
-			var max_h_attr = $('#lcl_wrap').attr('data-lcl-max-h');
-			
-			var max_w = (fs_mode) ? $(window).width() 	: Math.floor(css_size_to_px(max_w_attr, 'w')) - horiz_add_space;
-			var max_h = (fs_mode) ? $(window).height() 	: Math.floor(css_size_to_px(max_h_attr, 'h')) - vert_add_space;	
-			
-			/////////
+            if(typeof(flags) === 'undefined') flags = {};
 
-			// sizes already calculated by text under processor
-			if(typeof(v.txt_und_sizes) == 'object') {
-				w = v.txt_und_sizes.w;
-				h = v.txt_und_sizes.h;	
-				
-				if(el.type == 'image') {
-					var img_sizes = v.img_sizes_cache[ el.src ];	
-				}
-			}
-			
-			// normal processing
-			else {			
-				switch(el.type) {
-					case 'image' : // discard forced sizes
-						$('#lcl_elem_wrap').css('bottom', 0);
-						
-						// no image found in cache - wait a bit and retry
-						if(typeof(v.img_sizes_cache[ el.src ]) == 'undefined') {
-                            setTimeout(function() {
-                                size_elem(el, flags, txt_und_sizes);  
-                            }, 50);
-                                
-							return false;	
-						}
-						var img_sizes = v.img_sizes_cache[ el.src ];
-						
-						// get image sizes
-						if(img_sizes.w <= max_w) {
-							w = img_sizes.w;
-							h = img_sizes.h;	
-						} else {
-							w = max_w;
-							h = Math.floor(w * (img_sizes.h / img_sizes.w));	
-						}
-						
-						// height is bigger than max one?
-						if(h > max_h) {
-							h = max_h;
-							w = Math.floor(h * (img_sizes.w / img_sizes.h));	
-						}
-						
-						// calculate text under 
-						if(elem_has_txt(el) && !$('.lcl_hidden_txt').length && o.data_position == 'under' && typeof(flags.no_txt_under) == 'undefined') {
-							txt_under_h(w, h, max_h);
-							
-							$(document).off('lcl_txt_und_calc').on('lcl_txt_und_calc', function() {
-								if(v.txt_und_sizes) {
-									if(v.txt_und_sizes == 'no_under') {
-										flags.no_txt_under = true;
-									}
-									
-									
-									
-									return size_elem( v.elems[ v.elem_index], flags);	
-								}
-							});
-							return false;
-						} 
-						else {
-							$('#lcl_subj').css('maxHeight', 'none');		
-						}
-						break;
-	
-					
-					default : // error message size
-						w = 280;
-						h = 125;
-						
-						break; 
-				}
-			}
-			
-			
-			// text on side - turn into text over if small screen or tiny lb
-			if(
-				(o.data_position == 'rside' || o.data_position == 'lside') && 
-				!$('.lcl_no_txt').length && typeof(flags.side_txt_checked) == 'undefined'
-			) {
-				var sto_w = w + add_space;
-				var sto_h = h + add_space;
-				var img_sizes = (el.type == 'image') ? v.img_sizes_cache[ el.src ] : '';
-				
-				// forced text over treshold
-				var tot = el.force_over_data;
-				if(!tot) {tot = 400;} 	
+            // side-text layout: reset forced on hover
+            if(typeof(flags.side_txt_checked) === 'undefined' && (!flags.no_txt_under)) {
+                $('#lcl_wrap').removeClass('lcl_force_txt_over');
+            }
 
-				if(el.type == 'image' && img_sizes.w > tot && img_sizes.h > tot) {
-					
-					if(!side_to_over_txt(el, tot, sto_w, sto_h, side_txt)) {
-						flags.side_txt_checked = true;
-						return size_elem(el, flags);	
-					}
-				}
-			}
-			
-			
+            const side_txt = (!$('.lcl_force_txt_over').length && !$('.lcl_hidden_txt').length &&
+                              ['rside','lside'].includes(o.data_position) && elem_has_txt(el)) ? $('#lcl_txt').outerWidth() : 0;
+
+            const thumbs_nav = (!fs_mode && $('#lcl_thumbs_nav').length && !$('.lcl_tn_hidden').length)
+                               ? $('#lcl_thumbs_nav').outerHeight(true) - parseInt($('#lcl_wrap').css('padding-bottom'), 10)
+                               : 0;
+
+            const cmd_h = (!fs_mode && $('.lcl_outer_cmd').length)
+                          ? $('.lcl_close').outerHeight(true) + parseInt($('#lcl_nav_cmd').css('padding-top'), 10) + parseInt($('#lcl_nav_cmd').css('padding-bottom'), 10)
+                          : 0;
+
+            const horiz_add_space = add_space,
+                  vert_add_space  = add_space + thumbs_nav + cmd_h;
+
+            // global max sizes (A)
+            const max_w_attr = $('#lcl_wrap').attr('data-lcl-max-w'),
+                  max_h_attr = $('#lcl_wrap').attr('data-lcl-max-h');
+
+            let max_w = fs_mode ? $(window).width() : Math.max(0, Math.floor(css_size_to_px(max_w_attr, 'w')) - horiz_add_space),
+                max_h = fs_mode ? $(window).height() : Math.max(0, Math.floor(css_size_to_px(max_h_attr, 'h')) - vert_add_space);
+
+            $('#lcl_window').css({
+                maxWidth: max_w,
+                maxHeight: max_h
+            });
+
+            // sizes already calculated
+            if(typeof(v.txt_und_sizes) === 'object') {
+                w = v.txt_und_sizes.w;
+                h = v.txt_und_sizes.h;
+
+                if(el.type === 'image') {
+                    img_sizes = v.img_sizes_cache[el.src];
+                }
+            }
+            else {
+                switch(el.type) {
+                    case 'image':
+                        $('#lcl_elem_wrap').css('bottom', 0);
+
+                        if(typeof(v.img_sizes_cache[el.src]) === 'undefined') {
+                            setTimeout(() => size_elem(el, flags), 50);
+                            return false;
+                        }
+                        img_sizes = v.img_sizes_cache[el.src];
+
+                        // media max sizes (C) - side text excluded
+                        const media_max_w = max_w - side_txt,
+                              media_max_h = max_h;
+
+                        const img_ratio = img_sizes.w / img_sizes.h,
+                              box_ratio = media_max_w / media_max_h;
+
+                        if(img_ratio > box_ratio) {
+                            w = media_max_w;
+                            h = Math.round(w / img_ratio);
+                        } else {
+                            h = media_max_h;
+                            w = Math.round(h * img_ratio);
+                        }
+
+                        if(elem_has_txt(el) && !$('.lcl_hidden_txt').length && o.data_position === 'under' && !flags.no_txt_under) {
+                            txt_under_h(w, h, media_max_h);
+
+                            $(document).off('lcl_txt_und_calc').on('lcl_txt_und_calc', function() {
+                                if(v.txt_und_sizes) {
+                                    if(v.txt_und_sizes === 'no_under') {
+                                        flags.no_txt_under = true;
+                                    }
+                                    size_elem(v.elems[v.elem_index], flags);
+                                }
+                            });
+
+                            return false;
+                        }
+                        else {
+                            $('#lcl_subj').css('maxHeight','none');
+                        }
+                        break;
+                        
+
+                    default:
+                        w = 280;
+                        h = 125;
+                        break;
+                }
+            }
+
+            // side text adjustment
+            if((o.data_position === 'rside' || o.data_position === 'lside') && !$('.lcl_no_txt').length && typeof(flags.side_txt_checked) === 'undefined') {
+                img_sizes = (el.type==='image') ? v.img_sizes_cache[el.src] : '';
+                let tot = el.force_over_data || 400;
+                
+                if(el.type !== 'image' || lcl_on_mobile || (el.type === 'image' && img_sizes.w > tot && img_sizes.h > tot)) {
+                    if(!side_to_over_txt(el, tot, w, h)) {
+                        flags.side_txt_checked = true;
+                        return size_elem(el, flags);
+                    }
+                }
+            }
+
+            
 			// reset text under var
 			v.txt_und_sizes = false;
 	
@@ -1269,13 +1323,16 @@
 			if(typeof(lcl_size_n_show_timeout) != 'undefined') {
 				clearTimeout(lcl_size_n_show_timeout);
 			}
-			var timing = ($('.lcl_first_sizing').length) ? o.open_close_time + 20 : adjusted_animation_time(); // +20 trick used to let CSS execute the opening timing
+            
+			let timing = ($('.lcl_first_sizing').length) ? o.open_close_time + 20 : adjusted_animation_time(); // +20 trick used to let CSS execute the opening timing
 			if($('.lcl_browser_resize').length || $('.lcl_toggling_fs').length || fs_mode) {
 				timing = 0;
 			}
-			
+            
 			lcl_size_n_show_timeout = setTimeout(function() {
-				if(lcl_is_active) {lcl_is_active = false;}
+				if(lcl_is_active) {
+                    lcl_is_active = false;
+                }
 				
 				// autoplay if first opening
 				if($('.lcl_first_sizing').length) {
@@ -1286,6 +1343,11 @@
 					}
 				}
 				
+				// html element - set auto height
+				if(el.type == 'html' && !fs_mode && !$('.lcl_first_sizing').length) {
+					$('#lcl_window').css('height', 'auto');		
+				}
+				
 				// fullscreen - image rendering manag
 				if(el.type == 'image') {
 					if($('.lcl_fullscreen_mode').length) {
@@ -1294,19 +1356,29 @@
 						$('.lcl_image_elem').css('background-size', 'cover');
 					}
 				}
+				
+				// focus iframe to track click
+				if($('.lcl_loading_iframe').length) {
+					lcl_iframe_click();	
+				}
 
 				$('#lcl_wrap').removeClass('lcl_first_sizing lcl_switching_elem lcl_is_resizing lcl_browser_resize');
-				$('#lcl_loader').removeClass('no_loader');	
+				$('#lcl_loader').removeClass('no_loader');
 				$(document).trigger('lcl_resized_window');
 			}, timing);
 		};
 		
+        
 		/* track window size changes */
 		$(window).resize(function() {
-			if(!lcl_shown || obj != lcl_curr_obj || $('.lcl_toggling_fs').length) {return false;}
+			if(!lcl_shown || obj != lcl_curr_obj || $('.lcl_toggling_fs').length) {
+                return false;
+            }
 			$('#lcl_wrap').addClass('lcl_browser_resize');
 			
-			if(typeof(lcl_rs_defer) != 'undefined') {clearTimeout(lcl_rs_defer);}
+			if(typeof(lcl_rs_defer) != 'undefined') {
+                clearTimeout(lcl_rs_defer);
+            }
 			lcl_rs_defer = setTimeout(function() {
 				lcl_resize();
 			}, 50);
@@ -1315,11 +1387,11 @@
 		
 		
 		/* calculate text under size - return new element's width and height in an object */
-		var txt_under_h = function(curr_w, curr_h, max_height, recursive_count) {
-			var rc = (typeof(recursive_count) == 'undefined') ? 1 : recursive_count;
-			var fs_mode = $('.lcl_fullscreen_mode').length;
-			var old_txt_h = Math.ceil( $('#lcl_txt').outerHeight() );
-			var w_ratio = curr_w / curr_h;
+		const txt_under_h = function(curr_w, curr_h, max_height, recursive_count) {
+			const rc = (typeof(recursive_count) == 'undefined') ? 1 : recursive_count,
+                  fs_mode = $('.lcl_fullscreen_mode').length,
+                  old_txt_h = Math.ceil($('#lcl_txt').outerHeight()),
+                  w_ratio = curr_w / curr_h;
 			
 			// fullscreen mode and thumbs - text always over
 			if(fs_mode && $('#lcl_thumbs_nav').length) {
@@ -1344,7 +1416,8 @@
 					'right' : 'auto',
 					'width' : curr_w
 				});
-			} else {
+			}
+            else {
 				$('#lcl_txt').css({
 					'right' : 0,
 					'width' : 'auto'
@@ -1352,11 +1425,12 @@
 			}
 			
 			// wait for CSS to be rendered
-			if(typeof(lcl_txt_under_calc) != 'undefined') {clearInterval(lcl_txt_under_calc);} 
+			if(typeof(lcl_txt_under_calc) != 'undefined') {
+                clearInterval(lcl_txt_under_calc);
+            } 
 			lcl_txt_under_calc = setTimeout(function() {
-				
-				var txt_h = Math.ceil( $('#lcl_txt').outerHeight() );
-				var overflow = (curr_h + txt_h) - max_height;
+				const txt_h = Math.ceil( $('#lcl_txt').outerHeight() ),
+                      overflow = (curr_h + txt_h) - max_height;
 				
 				// fullscreen mode (no thumbs) - just set max height
 				if(fs_mode) {
@@ -1370,14 +1444,15 @@
 				
 				// there's overflow - recurse
 				if(overflow > 0 && ( typeof(recursive_count) == 'undefined' || recursive_count < 10)) {
-	
-					var new_h = curr_h - overflow;
-					var new_w = Math.floor(new_h * w_ratio);	
+					const new_h = curr_h - overflow,
+                          new_w = Math.floor(new_h * w_ratio);	
 					
 					
-					// text over treshold
-					var tot = lcl_ai_vars.elems[lcl_ai_vars.elem_index].force_over_data;
-					if(!tot) {tot = 400;} 
+					// text over threshold
+					let tot = lcl_ai_vars.elems[lcl_ai_vars.elem_index].force_over_data;
+					if(!tot) {
+                        tot = 300;
+                    } 
 					
 					if(new_w < tot || new_h < tot) {
 						$('#lcl_wrap').removeClass('lcl_txt_under_calc').addClass('lcl_force_txt_over'); // screen too small or image excessively tall - switch to text over
@@ -1415,16 +1490,19 @@
 		
 		
 		/* is lightbox too small to show contents with side text? turn into over txt */
-		var side_to_over_txt = function(el, treshold, w, h, side_txt_w) {
-			var already_forced = $('.lcl_force_txt_over').length;
-		
-			if(w < treshold || (el.type != 'html' && h < treshold)) {
-				if(already_forced) {return true;}
-						
+		const side_to_over_txt = function(el, threshold, w, h) {
+			const already_forced = $('.lcl_force_txt_over').length;
+
+			if(w < threshold || (el.type != 'html' && h < threshold)) {
+				if(already_forced) {
+                    return true;
+                }	
 				$('#lcl_wrap').addClass('lcl_force_txt_over');		
 			}
 			else {
-				if(!already_forced) {return true;}
+				if(!already_forced) {
+                    return true;
+                }
 				
 				$('#lcl_wrap').removeClass('lcl_force_txt_over');
 			}
@@ -1432,18 +1510,18 @@
 			return false;
 		};
 		
+        
 		
 		/* are inner commands too wide for lb window? move to outer */
-		var inner_to_outer_cmd = function(el, window_width) {
-			var o = lcl_ai_opts;
-			var fs_mode = ($('.lcl_fullscreen_mode').length) ? true : false;
+		const inner_to_outer_cmd = function(el, window_width) {
+			const fs_mode = ($('.lcl_fullscreen_mode').length) ? true : false;
 			
 			// if already acted - reset
 			if($('.lcl_forced_outer_cmd').length) {
 				$('#lcl_wrap').removeClass('lcl_forced_outer_cmd');
 				$('#lcl_wrap').removeClass('lcl_outer_cmd').addClass('lcl_inner_cmd');
 				
-				var nav = $('#lcl_nav_cmd').detach();
+				const nav = $('#lcl_nav_cmd').detach();
 				$('#lcl_window').prepend(nav);		
 			}
 			
@@ -1451,8 +1529,8 @@
 			if(!fs_mode && lcl_ai_vars.inner_cmd_w === false) {
 				lcl_ai_vars.inner_cmd_w = 0;
 				
-				jQuery('#lcl_nav_cmd .lcl_icon').each(function() {
-					if(($(this).hasClass('lcl_prev') || $(this).hasClass('lcl_next')) && o.nav_btn_pos == 'middle') {
+				$('#lcl_nav_cmd .lcl_icon').each(function() {
+					if(($(this).hasClass('lcl_prev') || $(this).hasClass('lcl_next')) && lcl_ai_opts.nav_btn_pos == 'middle') {
 						return true;
 					}
 							
@@ -1480,17 +1558,20 @@
 		
 		
 		/* switch element - new_el could be "next", "prev" or element index */
-		var switch_elem = function(new_el, slideshow_switch) {
-			var v 			= lcl_ai_vars; 
-			var carousel	= lcl_ai_opts.carousel;
+		const switch_elem = function(new_el, slideshow_switch) {
+			let v 			= lcl_ai_vars; 
+			const carousel	= lcl_ai_opts.carousel;
 			
-			if(lcl_is_active || v.elems.length < 2 || !lcl_ai_opts.gallery || $('.lcl_switching_elem').length) {return false;}
-
+			if(lcl_is_active || v.elems.length < 2 || !lcl_ai_opts.gallery || $('.lcl_switching_elem').length) {
+                return false;
+            }
+            
 			// find and sanitize new index
 			if(new_el == 'next'){
 				if(v.elem_index == (v.elems.length - 1)) {
-					if(!carousel) {return false;}
-					
+					if(!carousel) {
+                        return false;
+                    }
 					new_el = 0;		
 				}
 				else {
@@ -1499,8 +1580,9 @@
 			}
 			else if(new_el == 'prev') {
 				if(!v.elem_index) {
-					if(!carousel) {return false;}
-					
+					if(!carousel) {
+                        return false;
+                    }
 					new_el = (v.elems.length - 1);		
 				}
 				else {
@@ -1537,8 +1619,7 @@
 			$('#lcl_wrap').addClass('lcl_switching_elem');	
 
 			setTimeout(function() {
-				$('#lcl_wrap').removeClass('lcl_playing_video');	
-				
+
 				// if switching from an html element - set static heights
 				if(v.elems[v.elem_index].type == 'html') {
 					$('#lcl_window').css('height', $('#lcl_contents_wrap').outerHeight());
@@ -1553,7 +1634,7 @@
 				
 				// switching | args: old_elem_id, new_elem_id
 				if(!v.is_arr_instance && lcl_curr_obj) {
-					var $subj = (v.elems_selector) ? $(v.elems_selector) : lcl_curr_obj;
+					const $subj = (v.elems_selector) ? $(v.elems_selector) : lcl_curr_obj;
 					$subj.first().trigger('lcl_on_elem_switch', [v.elem_index, new_el]);
 				}	
 				
@@ -1571,25 +1652,32 @@
 		
 		
 		/* temporary stop slideshow (to wait a preloader for example) */
-		var temp_slideshow_stop = function() {
-			if(typeof(lcl_slideshow) == 'undefined') {return false;}
+		const temp_slideshow_stop = function() {
+			if(typeof(lcl_slideshow) == 'undefined') {
+                return false;
+            }
 			clearInterval(lcl_slideshow);	
 		};
 		
 		
+        
 		/* progressbar animation management */
-		var progbar_animate = function(first_run) {
-			var o = lcl_ai_opts;
-			if(!o.progressbar) {return false;}
+		const progbar_animate = function(first_run) {
+			const o = lcl_ai_opts;
+			if(!o.progressbar) {
+                return false;
+            }
 			
-			var delay = (first_run) ? 0 : (adjusted_animation_time() + adjusted_fading_time());  
-			var time = o.slideshow_time + adjusted_animation_time() - delay;
+			const delay = (first_run) ? 0 : (adjusted_animation_time() + adjusted_fading_time()),
+                  time = o.slideshow_time + adjusted_animation_time() - delay;
 			
 			if(!$('#lcl_progressbar').length) {
 				$('#lcl_wrap').append('<div id="lcl_progressbar"></div>');	
 			}
 			
-			if(typeof(lcl_pb_timeout) != 'undefined') {clearTimeout(lcl_pb_timeout);}
+			if(typeof(lcl_pb_timeout) != 'undefined') {
+                clearTimeout(lcl_pb_timeout);
+            }
 			lcl_pb_timeout = setTimeout(function() {
 				$('#lcl_progressbar').stop(true).removeAttr('style').css('width', 0).animate({width: '100%'}, time, 'linear', function() {
 					
@@ -1601,8 +1689,10 @@
 		
 		
 		/* close lightbox */
-		var close_lb = function() {
-			if(!lcl_shown) {return false;}
+		const close_lb = function() {
+			if(!lcl_shown) {
+                return false;
+            }
 			
 			// lightbox is about to be closed - callback
 			if(typeof(lcl_ai_opts.on_close) == 'function') {
@@ -1632,10 +1722,10 @@
 			setTimeout(function() {
 				$('#lcl_wrap, #lcl_inline_style').remove();
 				
-				// restore html/body inline CSS
+				// remove scrollbar? remove class
 				if(lcl_ai_opts.remove_scrollbar) {
-					jQuery('html').attr('style', lcl_ai_vars.html_style);
-					jQuery('body').attr('style', lcl_ai_vars.body_style);
+                    $('html').attr('style', lcl_ai_vars.html_style);
+					$('body').attr('style', lcl_ai_vars.body_style);
 				}
 				
 				
@@ -1652,7 +1742,9 @@
 				
 			}, (lcl_ai_opts.open_close_time + 80));
 			
-			if(typeof(lcl_size_check) != 'undefined') {clearTimeout(lcl_size_check);}
+			if(typeof(lcl_size_check) != 'undefined') {
+                clearTimeout(lcl_size_check);
+            }
 		};
 		
 		
@@ -1661,33 +1753,72 @@
 		
 		
 		
-		/* Setup fullscreen mode */
-		var enter_fullscreen = function(set_browser_status, on_opening) {
-			if(typeof(on_opening) == 'undefined') {on_opening = false;}
-				
-			if(!lcl_shown || !lcl_ai_opts.fullscreen || (!on_opening && lcl_is_active)) {return false;}
-
-			var o = lcl_ai_opts;
-			var v = lcl_ai_vars;
-
-			// hide window elements
-			$('#lcl_wrap').addClass('lcl_toggling_fs');
+		/* get URL query vars and returns them into an associative array */
+		const get_url_qvars = function() {
+			lcl_hashless_url = window.location.href;
 			
-			// enbale browser's fs
-			if(o.browser_fs_mode && document.fullscreenEnabled && typeof(navigator.userActivation) != 'undefined' && navigator.userActivation.hasBeenActive) {
-				if (document.documentElement.requestFullscreen) {
-					document.documentElement.requestFullscreen();
-				} else if (document.documentElement.msRequestFullscreen) {
-					document.documentElement.msRequestFullscreen();
-				} else if (document.documentElement.mozRequestFullScreen) {
-					document.documentElement.mozRequestFullScreen();
-				} else if (document.documentElement.webkitRequestFullscreen) {
-					document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-				}
+			if(lcl_hashless_url.indexOf('#') !== -1) {
+				const hash_arr = lcl_hashless_url.split('#');
+				lcl_hashless_url = hash_arr[0];
+				lcl_url_hash = '#' + hash_arr[1];
 			}
 			
+			// detect
+			let qvars = {};
+			const raw = lcl_hashless_url.slice(lcl_hashless_url.indexOf('?') + 1).split('&');
+			
+			$.each(raw, function(i, v) {
+				var arr = v.split('=');
+				qvars[arr[0]] = arr[1];
+			});	
+			
+			return qvars;
+		};
+		
+		
+        
+		//////////////////////////////////////////////////////////////
+		
+		
+		
+		/* Setup fullscreen mode */
+		const enter_fullscreen = function(set_browser_status, on_opening) {
+			if(typeof(on_opening) == 'undefined') {
+                on_opening = false;
+            }
+            
+			if(!lcl_shown || !lcl_ai_opts.fullscreen || (!on_opening && lcl_is_active) || $('#lcl_wrap').hasClass('lcl_fullscreen_mode')) {
+                return false;
+            }
+            
+			const o = lcl_ai_opts;
+			let v = lcl_ai_vars;
+
+			// hide window elements
+            const no_fs_animation_class = (on_opening) ? ' lcl_forced_fullscreen' : '';
+			$('#lcl_wrap').addClass('lcl_toggling_fs'+ no_fs_animation_class);
+			
+			// enbale browser's fs
+            if(set_browser_status) {
+                const canFullscreen =
+                    o.browser_fs_mode &&
+                    document.fullscreenEnabled &&
+                    navigator.userActivation?.hasBeenActive;
+
+                if(canFullscreen) {
+                    const el = document.documentElement;
+
+                    if(el.requestFullscreen) {
+                        el.requestFullscreen();
+                    } else if (el.webkitRequestFullscreen) {
+                        el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    }
+                }
+            }
+			
 			// set wrap class - recalculate sizes - show
-			var timing = (on_opening) ? o.open_close_time : o.fading_time;
+			const timing = (on_opening) ? o.open_close_time : o.fading_time;
+               
 			setTimeout(function() {
 				$('#lcl_wrap').addClass('lcl_fullscreen_mode');
 				size_elem( v.elems[v.elem_index] );
@@ -1701,9 +1832,9 @@
 						size_elem( lcl_curr_vars.elems[lcl_curr_vars.elem_index] );
 					}
 					
-					setTimeout(function() {
-						$('#lcl_wrap').removeClass('lcl_toggling_fs');
-					}, 150); // 50 (sizing) + 100 (smoothing) is forced sizing timing for fs switch
+                    setTimeout(function() {
+                        $('#lcl_wrap').removeClass('lcl_toggling_fs');
+                    }, 150); // 50 (sizing) + 100 (smoothing) is forced sizing timing for fs switch 
 				});
 			}, timing);
 			
@@ -1720,10 +1851,11 @@
 			}
 		};
 		
+        
 		
 		/* fullscreen image rendering manag - smart/fit/fill */
-		var fs_img_manag = function(img_sizes) {
-			var behav = lcl_ai_opts.fs_img_behavior;
+		const fs_img_manag = function(img_sizes) {
+			const behav = lcl_ai_opts.fs_img_behavior;
 
 			// if image is smaller than screen - bg size = auto
 			if($('.lcl_fullscreen_mode').length && img_sizes.w <= $('#lcl_subj').width() && img_sizes.h <= $('#lcl_subj').height()) {
@@ -1751,9 +1883,9 @@
 					return false;	
 				}
 								
-				var ratio_diff = ($(window).width() / $(window).height()) - (img_sizes.w / img_sizes.h);
-				var w_diff = $(window).width() - img_sizes.w; 
-				var h_diff = $(window).height() - img_sizes.h; 
+				const ratio_diff = ($(window).width() / $(window).height()) - (img_sizes.w / img_sizes.h),
+                      w_diff = $(window).width() - img_sizes.w,
+                      h_diff = $(window).height() - img_sizes.h; 
 	
 				if( (ratio_diff <= 1.15 && ratio_diff >= -1.15) && (w_diff <= 350 && h_diff <= 350) ) { // fill
 					$('.lcl_image_elem').css('background-size', 'cover');	
@@ -1765,24 +1897,31 @@
 		};
 		
 		
+        
 		/* exit fullscreen */
-		var exit_fullscreen = function(set_browser_status) {
-			if(!lcl_shown || !lcl_ai_opts.fullscreen || lcl_is_active) {return false;}
-			var o = lcl_ai_opts;
-			
+        const exit_fullscreen = function(set_browser_status) {
+			const o = lcl_ai_opts;
+            
+            if(!lcl_shown || !o.fullscreen || lcl_is_active || !$('#lcl_wrap').hasClass('lcl_fullscreen_mode')) {
+                return false;
+            }
+            if(o.fs_only === true || (typeof(o.fs_only) == 'number' && ($(window).width() < o.fs_only || $(window).height() < o.fs_only))) {
+                return false;   
+            }
+            
 			// hide window elements
 			$('#lcl_wrap').addClass('lcl_toggling_fs');
-			$('#lcl_window').fadeTo(70, 0);
-
 
 			// set wrap class - recalculate sizes - show
 			setTimeout(function() {
+                let browser_fs_timing;
+                
 				// disable browser's fs
 				if(o.browser_fs_mode && typeof(set_browser_status) != 'undefined') {
 					exit_browser_fs();
-					var browser_fs_timing = 250; // time taken by browser to exit fullscreen mode
+					browser_fs_timing = 250; // time taken by browser to exit fullscreen mode
 				} else {
-					var browser_fs_timing = 0;	
+					browser_fs_timing = 0;	
 				}
 				
 				$('#lcl_wrap').removeClass('lcl_fullscreen_mode');
@@ -1791,15 +1930,10 @@
 				setTimeout(function() {
 					size_elem( lcl_ai_vars.elems[lcl_ai_vars.elem_index] );
 					
-					// IE 11 requires a bit more
-					var userAgent = userAgent || navigator.userAgent;
- 					var ie11_time = (userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1) ? 100 : 0;
-					
 					// disable fs toogle class
 					setTimeout(function() {
-						$('#lcl_window').fadeTo(30, 1);
-						$('#lcl_wrap').removeClass('lcl_toggling_fs');
-					}, 300 + ie11_time); // 50 (sizing) + 100 (smoothing) is forced sizing timing for fs switch
+						$('#lcl_wrap').removeClass('lcl_toggling_fs lcl_forced_fullscreen');
+					}, 150); // 50 (sizing) + 100 (smoothing) is forced sizing timing for fs switch
 					
 				}, browser_fs_timing);
 			}, 70);
@@ -1813,34 +1947,42 @@
 			
 			// exiting fullscreen - action
 			if(!lcl_ai_vars.is_arr_instance) {
-				var $subj = (lcl_ai_vars.elems_selector) ? $(lcl_ai_vars.elems_selector) : lcl_curr_obj;
+				const $subj = (lcl_ai_vars.elems_selector) ? $(lcl_ai_vars.elems_selector) : lcl_curr_obj;
 				$subj.first().trigger('lcl_on_fs_exit');
 			}
 		};
 		
 		
+        
 		/* trigger browser instruction to exit fullscreen mode */
-		var exit_browser_fs = function() {
-			if (document.exitFullscreen) {
-				document.exitFullscreen();
-			} else if (document.msExitFullscreen) {
-				document.msExitFullscreen();
-			} else if (document.mozCancelFullScreen) {
-				document.mozCancelFullScreen();
-			} else if (document.webkitExitFullscreen) {
-				document.webkitExitFullscreen();
-			}
+		const exit_browser_fs = function() {
+            const isFullscreen =
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement;
+
+            if(!isFullscreen) {
+                return;
+            }
+
+            if(document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
 		};
-		
+        
 		
 		//////////////////////////////////////////////////////////////
 		
 		
 		/* setup thumbnails navigator */
-		var setup_thumbs_nav = function() {
-			var mixed_types = false;
-			var tracked_type = false;
-			var uniq_id = Date.now();
+		const setup_thumbs_nav = function() {
+			let mixed_types = false,
+                tracked_type;
+            
+			const uniq_id = Date.now();
 			
 			$('#lcl_thumbs_nav').append('<span class="lcl_tn_prev"></span><ul class="lcl_tn_inner"></ul><span class="lcl_tn_next"></span>');
 			$('#lcl_thumbs_nav').attr('rel', uniq_id);
@@ -1857,87 +1999,39 @@
 						}
 					}
 					
-					var bg = '',
-						bg_img = '';
+					let bg_img = '';
 						tpc = ''; // thumbs preload class
 					
 					
 					// has got a specific thumbnail?
 					if(v.thumb) {
 						bg_img = v.thumb;
-						bg = 'style="background-image: url(\''+ v.thumb +'\');"';
 					}
 					else {
 					
 						// find thumbnail for each source
 						switch(v.type) {
-							case 'image' 	: bg_img = v.src; break;	
-							case 'youtube' 	: bg_img = (v.poster) ? v.poster : 'https://img.youtube.com/vi/'+ v.video_id +'/maxresdefault.jpg'; break;
-							
-							case 'vimeo' 	: 
-								
-								if(v.poster) {
-									bg_img = v.poster;
-									break;	
-								}
-								else {
-									if(typeof(lcl_ai_vars.vimeo_thumb_cache[ v.src ]) == 'undefined') {
-										tpc = 'lcl_tn_preload';
-									
-										$.getJSON('https://www.vimeo.com/api/v2/video/' + v.video_id + '.json?callback=?', {format: "json"}, function(data) { // need async
-											thumbs_nav_img_preload(data[0].thumbnail_large, i, uniq_id);
-											lcl_ai_vars.vimeo_thumb_cache[ v.src ] = data[0].thumbnail_large;
-	
-											// use ATTR to avoid issues with IE10
-											$('.lcl_tn_inner li[rel='+i+']').attr('style', $('.lcl_tn_inner li[rel='+i+']').attr('style') + ' background-image: url(\''+ data[0].thumbnail_large +'\');');
-										});
-									}
-									else {
-										bg_img = lcl_ai_vars.vimeo_thumb_cache[ v.src ];	
-									}
-								}
-								break;
-								
-							case 'video'	: 
-							case 'iframe'	: 
-							case 'html'		: 
-							
-								if(v.poster) {bg_img = v.poster;} break;	
-								
-							case 'dailymotion' 	: bg_img = (v.poster) ? v.poster : 'http://www.dailymotion.com/thumbnail/video/'+ v.video_id; break;
+							case 'image' 	: bg_img = v.src; break;
 						}
 						
 						if(bg_img) {
 							
 							// has thumbs maker?
-							if(lcl_ai_opts.thumbs_maker_url && (v.poster || $.inArray(v.type, ['youtube', 'vimeo', 'dailymotion']) === -1)) {
+							if(lcl_ai_opts.thumbs_maker_url && (v.poster || ['youtube', 'vimeo', 'dailymotion'].includes(v.type))) {
 								 var base = lcl_ai_opts.thumbs_maker_url;
 								 bg_img = base.replace('%URL%', encodeURIComponent(bg_img)).replace('%W%', lcl_ai_opts.thumbs_w).replace('%H%', lcl_ai_opts.thumbs_h);
 							}
-							
-							bg = 'style="background-image: url(\''+ bg_img +'\');"';
-							
-							
-							// if is video - store as vid_poster
-							if( $.inArray(v.type, ['youtube', 'vimeo', 'dailymotion']) !== -1 && !v.poster) {
-								lcl_ai_vars.elems[i].vid_poster = bg_img;		
-							}
+                           
 						}
 					}
 					
-					
-					// if iframe and html and no poster - skip
-					if((v.type == 'html' || v.type == 'iframe') && !bg) {return true;}
-					
-					// video preview
-					var vp = (v.type == 'video' && !bg) ? '<video src="'+ v.src +'"></video>' : '';
-					
+					const img_preview = (bg_img) ? '<img src="'+ bg_img +'" />' : ''; 
+                    
 					// thumbs preload class
-					//if(!tpc && bg && typeof(lcl_ai_vars.img_sizes_cache[ bg_img ]) == 'undefined') {tpc = 'lcl_tn_preload';}
 					tpc = 'lcl_tn_preload';
 					
 					// append
-					$('.lcl_tn_inner').append('<li class="lcl_tn_'+ v.type +' '+ tpc +'" title="'+ v.title +'" rel="'+i+'" '+ bg +'>'+ vp +'</li>');	
+					$('.lcl_tn_inner').append('<li class="lcl_tn_'+ v.type +' '+ tpc +'" title="'+ v.title +'" rel="'+i+'">'+ img_preview +'</li>');	
 					
 					// thumbs image preload
 					if(tpc) {
@@ -1954,10 +2048,7 @@
 			}
 			
 			$('.lcl_tn_inner > li').css('width', lcl_ai_opts.thumbs_w);
-			
-			if(!lcl_on_mobile) {
-				$('.lcl_tn_inner').lcl_smoothscroll(0.3, 400, false, true);
-			}
+			$('.lcl_tn_inner').lcl_smoothscroll(0.3, 400, false, true);
 		
 			// mixed type class
 			if(mixed_types && lcl_ai_opts.tn_icons) {
@@ -1971,10 +2062,13 @@
 		};
 		
 		
+        
 		/* thumbs image preload */
-		var thumbs_nav_img_preload = function(img_url, el_index, uniq_id) {
-			$('<img/>').bind("load", function(){ 
-				if(!lcl_ai_vars) {return false;}
+		const thumbs_nav_img_preload = function(img_url, el_index, uniq_id) {
+			$('<img/>').on("load", function(){ 
+				if(!lcl_ai_vars) {
+                    return false;
+                }
 				
 				lcl_ai_vars.img_sizes_cache[ img_url ] = {
 					w : this.width,
@@ -1989,19 +2083,25 @@
 			}).attr('src', img_url);
 		};
 		
+        
 		
 		/* thumbs navigator - thumbs total width */
-		var thumbs_nav_elems_w = function() {
-			var thumbs_w = 0;
-			$('.lcl_tn_inner > li').each(function() {thumbs_w = thumbs_w + $(this).outerWidth(true);});
+		const thumbs_nav_elems_w = function() {
+			let thumbs_w = 0;
+			$('.lcl_tn_inner > li').each(function() {
+                thumbs_w = thumbs_w + $(this).outerWidth(true);
+            });
 			
 			return thumbs_w;
 		};
 		
 		
+        
 		/* thumbs navigator - arrows visibility */
-		var thumbs_nav_arrows_vis = function() {
-			if(!$('#lcl_thumbs_nav').length) {return false;}
+		const thumbs_nav_arrows_vis = function() {
+			if(!$('#lcl_thumbs_nav').length) {
+                return false;
+            }
 			
 			if(thumbs_nav_elems_w() > $('.lcl_tn_inner').width()) {
 				$('#lcl_thumbs_nav').addClass('lcl_tn_has_arr');
@@ -2010,35 +2110,41 @@
 			}
 		};
 		
+        
 		
 		/* thumbs navigator - arrows opacity */
-		var thumbs_nav_arrows_opacity = function() {
-			var sl = $('.lcl_tn_inner').scrollLeft();
+		const thumbs_nav_arrows_opacity = function() {
+			const sl = $('.lcl_tn_inner').scrollLeft();
 			
 			if(!sl) {
-				$('.lcl_tn_prev').addClass('lcl_tn_disabled_arr').stop(true).fadeTo(150, 0.5);	
+				$('.lcl_tn_prev').addClass('lcl_tn_disabled_arr');	
 			} else {
-				$('.lcl_tn_prev').removeClass('lcl_tn_disabled_arr').stop(true).fadeTo(150, 1);	
+				$('.lcl_tn_prev').removeClass('lcl_tn_disabled_arr');	
 			}
 			
 			if(sl >= (thumbs_nav_elems_w() - $('.lcl_tn_inner').width())) {
-				$('.lcl_tn_next').addClass('lcl_tn_disabled_arr').stop(true).fadeTo(150, 0.5);	
+				$('.lcl_tn_next').addClass('lcl_tn_disabled_arr');	
 			} else {
-				$('.lcl_tn_next').removeClass('lcl_tn_disabled_arr').stop(true).fadeTo(150, 1);	
+				$('.lcl_tn_next').removeClass('lcl_tn_disabled_arr');	
 			}
 		};
 		$(document).on('lcl_smoothscroll_end', '.lcl_tn_inner', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			thumbs_nav_arrows_opacity();
 		});	
 		
 		
+        
 		/* thumbs navigator - scroll to shown element - centering it */
-		var thumbs_nav_scroll_to_item = function(elem_id) {
-			var $subj = $('.lcl_tn_inner > li[rel='+ elem_id +']');
-			if(!$subj.length) {return false;}
+		const thumbs_nav_scroll_to_item = function(elem_id) {
+			const $subj = $('.lcl_tn_inner > li[rel='+ elem_id +']');
+			if(!$subj.length) {
+                return false;
+            }
 			
-			var id = 0;
+			let id = 0;
 			$('.lcl_tn_inner > li').each(function(i,v) {
                 if($(this).attr('rel') == elem_id) {
 					id = i;
@@ -2047,12 +2153,11 @@
             });
 			
 			// center thumb with scroll
-			var elem_w = $('.lcl_tn_inner > li').last().outerWidth();
-			var margin = parseInt($('.lcl_tn_inner > li').last().css('margin-left'), 10);
-			var wrap_w = $('.lcl_tn_inner').width(); 
-			var to_center = Math.floor( ($('.lcl_tn_inner').width() - elem_w - margin) / 2 );
-			
-			var new_offset = ((elem_w * id) + margin * (id - 1)) + Math.floor(margin / 2) - to_center;
+			const elem_w = $('.lcl_tn_inner > li').last().outerWidth(),
+                  margin = parseInt($('.lcl_tn_inner > li').last().css('margin-left'), 10),
+                  wrap_w = $('.lcl_tn_inner').width(),
+                  to_center = Math.floor( ($('.lcl_tn_inner').width() - elem_w - margin) / 2 ),
+                  new_offset = ((elem_w * id) + margin * (id - 1)) + Math.floor(margin / 2) - to_center;
 			
 			$('.lcl_tn_inner').stop(true).animate({"scrollLeft" : new_offset}, 500, function() {
 				$('.lcl_tn_inner').trigger('lcl_smoothscroll_end');	
@@ -2068,100 +2173,101 @@
 		
 		
 		/* lc smooth scroll system */
-			// suggested ratio = 0.3
-  			// suggested duration = 400
-		$.fn.lcl_smoothscroll = function(ratio, duration, ignoreX, ignoreY) {
-			if(lcl_on_mobile) {return false;}
-			this.off("mousemove mousedown mouseup mouseenter mouseleave");
-			
-			var $subj = this,
-				trackX = (typeof(ignoreX) == 'undefined' || !ignoreX) ? true : false,
-				trackY = (typeof(ignoreY) == 'undefined' || !ignoreY) ? true : false,
-				
-				mouseout_timeout = false,
-				curDown = false,
-				curYPos = 0,
-				curXPos = 0,
-			
-				startScrollY = 0,
-				startScrollX = 0,
-				scrollDif   = 0;
-			
-			$subj.mousemove(function(m){
-				if(curDown === true) {
-					$subj.stop(true);
-					
-					if(trackX) {
-					  $subj.scrollLeft(startScrollX + (curXPos - m.pageX));
-					}
-					if(trackY) {
-					  $subj.scrollTop(startScrollY + (curYPos - m.pageY)); 
-					}
-				}
-			});
-			
-			
-			$subj.mouseover(function() {
-				if(mouseout_timeout) {
-					clearTimeout(mouseout_timeout);	
-				}
-			});
-			$subj.mouseout(function() {
-				mouseout_timeout = setTimeout(function() {
-					curDown = false;
-					mouseout_timeout = false;
-				}, 500);
-			});
+        $.fn.lcl_smoothscroll = function(ratio, duration, ignoreX, ignoreY) {
+            if(lcl_on_mobile) {
+                return this; // return this for chaining
+            }
 
-			$subj.mousedown(function(m){
-				if(typeof(lc_sms_timeout) != 'undefined') {clearTimeout(lc_sms_timeout);}
-				curDown = true;
-			  
-				startScrollY = $subj.scrollTop();
-				startScrollX = $subj.scrollLeft();
+            const trackX = (typeof ignoreX === 'undefined' || !ignoreX),
+                  trackY = (typeof ignoreY === 'undefined' || !ignoreY);
 
-				curYPos = m.pageY;
-				curXPos = m.pageX;
-			});
-			
-			$subj.mouseup(function(m){
-				curDown = false;
-			  
-				// smooth scroll
-				var currScrollY = $subj.scrollTop();
-				var scrollDiffY = (startScrollY - currScrollY) * -1;  
-				var newScrollY = currScrollY + ( scrollDiffY * ratio);
-			  
-				var currScrollX = $subj.scrollLeft();
-				var scrollDiffX = (startScrollX - currScrollX) * -1;  
-				var newScrollX = currScrollX + ( scrollDiffX * ratio);
-				
-				// thumbs nav - if is tiny movement, simulate a true click on element
-			  	if(
-					(scrollDiffY < 3 && scrollDiffY > -3) &&  
-					(scrollDiffX < 3 && scrollDiffX > -3) 
-				) {
-					$(m.target).trigger('lcl_tn_elem_click');
-					return false;	
-				}
-				
-				// animate (only if movement was wide enough)
-				if(scrollDiffY > 20 || scrollDiffX > 20) {
-					var anim_obj = {};
-					if(trackY) {
-						anim_obj["scrollTop"] = newScrollY;
-					}
-					if(trackX) {
-						anim_obj["scrollLeft"] = newScrollX;
-					}
-					
-					$subj.stop(true).animate(anim_obj, duration, 'linear', function() {
-						$subj.trigger('lcl_smoothscroll_end');	
-					});
-				}
-			});
-		};
-		
+            return this.each(function() {
+                const $subj = $(this);
+
+                $subj.off("pointermove pointerdown pointerup pointercancel mouseenter mouseleave");
+
+                let curDown = false,
+                    pointerId = null,
+                    $clicked_el,
+                    curYPos = 0,
+                    curXPos = 0,
+                    startYPos = 0,
+                    startXPos = 0,
+                    startScrollY = 0,
+                    startScrollX = 0;
+
+                // pointer down
+                $subj.on('pointerdown', function(e) {
+                    if (e.pointerType !== 'mouse') return;
+
+                    $clicked_el = $(e.target);
+                    e.preventDefault();
+
+                    curDown = true;
+                    pointerId = e.pointerId;
+
+                    startScrollY = $subj.scrollTop();
+                    startScrollX = $subj.scrollLeft();
+                    curYPos = startYPos = e.pageY;
+                    curXPos = startXPos = e.pageX;
+
+                    e.currentTarget.setPointerCapture(pointerId);
+                });
+
+                // pointer move
+                $subj.on('pointermove', function(e) {
+                    if (!curDown || e.pointerId !== pointerId) return;
+                    $subj.stop(true);
+
+                    if (trackX) $subj.scrollLeft(startScrollX + (curXPos - e.pageX));
+                    if (trackY) $subj.scrollTop(startScrollY + (curYPos - e.pageY));
+                });
+
+                // pointer up / cancel
+                const endDrag = function(e) {
+                    if (!curDown || e.pointerId !== pointerId) return;
+
+                    curDown = false;
+                    pointerId = null;
+                    e.currentTarget.releasePointerCapture(e.pointerId);
+
+                    const currScrollY = $subj.scrollTop(),
+                          scrollDiffY = (startScrollY - currScrollY) * -1,
+                          newScrollY = currScrollY + (scrollDiffY * ratio),
+
+                          currScrollX = $subj.scrollLeft(),
+                          scrollDiffX = (startScrollX - currScrollX) * -1,
+                          newScrollX = currScrollX + (scrollDiffX * ratio);
+
+                    // trigger click if minimal movement
+                    const deltaX = Math.abs(e.pageX - startXPos),
+                          deltaY = Math.abs(e.pageY - startYPos);
+                    if (deltaX < 3 && deltaY < 3) {
+                        $clicked_el.trigger('lcl_tn_elem_click');
+                        return false;
+                    }
+
+                    // animated scroll
+                    if(Math.abs(scrollDiffY) > 20 || Math.abs(scrollDiffX) > 20) {
+                        let anim_obj = {};
+                        if (trackY) anim_obj["scrollTop"] = newScrollY;
+                        if (trackX) anim_obj["scrollLeft"] = newScrollX;
+
+                        $subj.stop(true).animate(anim_obj, duration, 'linear', function() {
+                            $subj.trigger('lcl_smoothscroll_end');
+                        });
+                    }
+                };
+                $subj.on('pointerup pointercancel', endDrag);
+
+                // fallback: reset drag if window loses focus
+                $(window).on('blur', function() {
+                    curDown = false;
+                    pointerId = null;
+                });
+            });
+        };
+
 		
 		//////////////////////////////////////////////////////////////
 		
@@ -2170,12 +2276,11 @@
 		if(!lcl_vars.is_arr_instance) {
 			if(lcl_settings.live_elements && lcl_vars.elems_selector) { // switch between static and dynamic elements retrieval   	
 					
-				$(document).off('click', lcl_vars.elems_selector)
-				.on('click', lcl_vars.elems_selector, function(e) {
+				$(document).off('click', lcl_vars.elems_selector).on('click', lcl_vars.elems_selector, function(e) {
 					e.preventDefault();
 					
 					// update elements count - live 
-					var vars = $.data(obj, 'lcl_vars');	
+					let vars = $.data(obj, 'lcl_vars');	
 					vars.elems_count = $(lcl_vars.elems_selector).length;
 
 					// open lightbox
@@ -2201,82 +2306,82 @@
 		
 		/* close clicking overlay or button */
 		$(document).on('click', '#lcl_overlay:not(.lcl_modal), .lcl_close, #lcl_corner_close', function(e) {
-			if(obj != lcl_curr_obj) {return true;}	
+			if(obj != lcl_curr_obj) {
+                return true;
+            }	
 			close_lb();
 		});	
 		
 		
 		/* navigation button - prev */
 		$(document).on('click', '.lcl_prev', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			switch_elem('prev');
 		});	
 		
 		/* navigation button - next */
 		$(document).on('click', '.lcl_next', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			switch_elem('next');
 		});	
 		
 		
 		/* Keyboard events */
+        let lcl_fs_key_timeout;
 		$(document).bind('keydown',function(e){
 			if(lcl_shown) {
-				if(obj != lcl_curr_obj) {return true;}
+				if(obj != lcl_curr_obj) {
+                    return true;
+                }
 				
 				// next 
-				if (e.keyCode == 39) {
+				if(e.keyCode == 39) {
 					e.preventDefault();
 					switch_elem('next');
 				}
 				
 				// prev
-				else if (e.keyCode == 37) {
+				else if(e.keyCode == 37) {
 					e.preventDefault();
 					switch_elem('prev');
 				}
 				
 				// close
-				else if (e.keyCode == 27) {
+				else if(e.keyCode == 27) {
 					e.preventDefault();
 					close_lb();
 				}
-				
-				// fullscreen
-				else if(e.keyCode == 122 && lcl_ai_opts.fullscreen) {
-					if(typeof(lcl_fs_key_timeout) != 'undefined') {clearTimeout(lcl_fs_key_timeout);}
-					
-					lcl_fs_key_timeout = setTimeout(function() {
-						if($('.lcl_fullscreen_mode').length) {
-							exit_fullscreen();
-						} else {
-							enter_fullscreen();	
-						}
-					}, 50);
-				}	
 			}
 		});
 		
 		
+        
 		/* elems navigation with mousewheel */ 
 		$(document).on('wheel', '#lcl_overlay, #lcl_window, #lcl_thumbs_nav:not(.lcl_tn_has_arr)', function(e) {
-			if(obj != lcl_curr_obj || !lcl_curr_opts.mousewheel) {return true;}
-			var $target = $(e.target); 
+			if(obj != lcl_curr_obj || !lcl_curr_opts.mousewheel) {
+                return true;
+            }
+			const delta = e.originalEvent.deltaY;
+            let $target = $(e.target);
+                  
 
 			// if not in window, do it!
 			if(!$target.is('#lcl_window') && !$target.parents('#lcl_window').length) {
 				e.preventDefault();
-				var delta = e.originalEvent.deltaY;
-				
-				if(delta > 0) 	{switch_elem('next');}
-				else 			{switch_elem('prev');}	
+				(delta > 0) ? switch_elem('next') : switch_elem('prev');
 			}
 			
 			else {
 				// cycle to know if parents have scrollers
-				var perform = true;
-				for(a=0; a<20; a++) {
-					if($target.is('#lcl_window')) {break;}
+				let perform = true;
+				for(let a=0; a<20; a++) {
+					if($target.is('#lcl_window')) {
+                        break;
+                    }
 					
 					if($target[0].scrollHeight > $target.outerHeight()) {
 						perform = false;	
@@ -2289,74 +2394,202 @@
 				
 				if(perform) {
 					e.preventDefault();
-					var delta = e.originalEvent.deltaY;
-						
-					if(delta > 0) 	{switch_elem('next');}
-					else 			{switch_elem('prev');}	
+                    (delta > 0) ? switch_elem('next') : switch_elem('prev');
 				}
 			}
 		});
 		
-		
-		/* next element clicking on image or zoom (where available with doubleclick) */
-		$(document).on('click', '.lcl_image_elem', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
-			
-			lcl_img_click_track = setTimeout(function() {
-				if(!$('.lcl_zoom_wrap').length) {
-					switch_elem('next');
-				}
-			}, 250);	
-		});
-		
-		
-		/* track doubleclick to zoom image */
-		$(document).on('dblclick', '.lcl_image_elem', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
-			
-			if(!lcl_curr_opts.img_zoom) {return true;}
-			if(!$('.lcl_zoom_icon').length) {return true;}
-			
-			// avoid single click trigger
-			if(typeof(lcl_img_click_track) != 'undefined') {
-				clearTimeout(lcl_img_click_track);
-				zoom(true);
-			}
-		});
-		
+            
+        
+        /* interactive navigation dragging the image */
+        const drag_n_drop_nav = function() {
+            if(!lcl_ai_opts.touchswipe) {
+                return;   
+            }
+
+            let isDragging = false,
+                dragLocked = false,
+                isMultiTouch = false,
+                startX = 0,
+                currentX = 0,
+                finalDeltaX = 0;
+
+            const $container = $('#lcl_window'),
+                  el = $container[0],
+                  LOCK_THRESHOLD = 8,   // px to lock the gesture
+                  ACTION_THRESHOLD = 85; // px to trigger navigation
+
+            let $dragTarget = $container;
+
+            // mouse + touch logic
+            const startDrag = (pageX) => {
+                isDragging = true;
+                dragLocked = false;
+                startX = pageX;
+                finalDeltaX = 0;
+
+                // choose drag target based on fullscreen mode
+                $dragTarget = $('.lcl_fullscreen_mode').length
+                    ? $('.lcl_image_elem')
+                    : $container;
+
+                // get current translateX value (if any)
+                const matrix = window.getComputedStyle($dragTarget[0]).transform;
+                currentX = (matrix !== 'none') ? parseFloat(matrix.split(',')[4]) : 0;
+
+                // disable transition while dragging
+                $dragTarget.css({
+                    transition: 'none',
+                    cursor: 'grabbing'
+                });
+            };
+
+            const moveDrag = (pageX) => {
+                if(!isDragging) {
+                    return;
+                }
+
+                finalDeltaX = pageX - startX;
+
+                // lock drag direction early to avoid browser scroll hijack
+                if(!dragLocked) {
+                    if(Math.abs(finalDeltaX) < LOCK_THRESHOLD) {
+                        return;
+                    }
+                    dragLocked = true;
+                }
+
+                $dragTarget.css({
+                    transform: `translateX(${currentX + finalDeltaX}px)`
+                });
+            };
+
+            const endDrag = () => {
+                if(!isDragging) {
+                    return;
+                }
+                isDragging = false;
+
+                // restore original styles
+                $dragTarget.css({
+                    cursor: '',
+                    transition: '',
+                    transform: ''
+                });
+
+                // trigger navigation only if drag distance is significant
+                if(Math.abs(finalDeltaX) >= ACTION_THRESHOLD) {
+                    const comeback_timing = (lcl_ai_opts.animation_time > 50)
+                        ? lcl_ai_opts.animation_time - 50
+                        : 0;
+
+                    setTimeout(() => {
+                        if(finalDeltaX > 0) {
+                            switch_elem('prev');
+                        } else {
+                            switch_elem('next');
+                        }
+                    }, comeback_timing);
+                }
+            };
+
+            // mouse actions
+            $container.on('mousedown', function(e) {
+                if(!$(e.target).is('.lcl_image_elem')) {
+                    return;
+                }
+                startDrag(e.pageX);
+            });
+
+            $(document).on('mousemove', function(e) {
+                moveDrag(e.pageX);
+            });
+
+            $(document).on('mouseup blur mouseleave', endDrag);
+
+            // touch actions
+            el.addEventListener('touchstart', function(e) {
+
+                // if becomes multitouch → abort drag
+                if(e.touches.length > 1) {
+                    isMultiTouch = true;
+                    endDrag();
+                    return;
+                }
+
+                if(!e.target.closest('.lcl_image_elem')) {
+                    return;
+                }
+
+                isMultiTouch = false;
+                startDrag(e.touches[0].pageX);
+
+            }, { passive: true });
+
+            el.addEventListener('touchmove', function(e) {
+
+                // multitouch detected mid-gesture → abort
+                if(e.touches.length > 1 || isMultiTouch) {
+                    isMultiTouch = true;
+                    endDrag();
+                    return;
+                }
+
+                if(!isDragging) {
+                    return;
+                }
+
+                e.preventDefault();
+                moveDrag(e.touches[0].pageX);
+
+            }, { passive: false });
+
+            el.addEventListener('touchend', function(e) {
+                if(e.touches.length > 0) {
+                    return;
+                }
+                isMultiTouch = false;
+                endDrag();
+            });
+
+            el.addEventListener('touchcancel', function() {
+                isMultiTouch = false;
+                endDrag();
+            });
+        };
+        
 		
 		/* toggle text */ 
 		$(document).on('click', '.lcl_txt_toggle', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
-			var o = lcl_ai_opts;
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
+			const o = lcl_ai_opts;
 
 			// class lcl_toggling_txt enables window sizing animations
 			if(!lcl_is_active && !$('.lcl_no_txt').length && !$('.lcl_toggling_txt').length) {
 				if(o.data_position != 'over') {
 					
-					var txt_on_side = (o.data_position == 'rside' || o.data_position == 'lside') ? true : false;
-					var forced_over = $('.lcl_force_txt_over').length;
-					var timing = (o.animation_time < 150) ? o.animation_time : 150;
-					var classes_delay = 0;
-					
+					const txt_on_side = (o.data_position == 'rside' || o.data_position == 'lside') ? true : false,
+                          forced_over = $('.lcl_force_txt_over').length,
+                          elems_fade_timing = 200,
+                          restore_timing = ($('.lcl_fullscreen_mode').length) ? o.animation_time : (o.animation_time * 2);
+                    
 					
 					// if text on side - hide subject
 					if(txt_on_side && !forced_over) {
-						$('#lcl_subj').fadeTo(timing, 0);	
+						$('#lcl_subj').stop().fadeTo(elems_fade_timing, 0);	
 					} 
 					// text under - hide 
 					else {
 						if(!forced_over) {
-							$('#lcl_contents_wrap').fadeTo(timing, 0);
-							classes_delay = timing;	
+							$('#lcl_contents_wrap').stop().fadeTo(elems_fade_timing, 0);
 						}
 					}
 					
-					setTimeout(function() {
-						$('#lcl_wrap').toggleClass('lcl_hidden_txt'); 
-					}, classes_delay);
+					$('#lcl_wrap').toggleClass('lcl_hidden_txt'); 
+                    
 					
-									
 					if(!forced_over) {
 						lcl_is_active = true;
 						$('#lcl_wrap').addClass('lcl_toggling_txt');
@@ -2367,18 +2600,17 @@
 							lcl_resize();
 						}, o.animation_time);
 						
-						// after sizing - disable animations again
-						setTimeout(function() {
-							$('#lcl_wrap').removeClass('lcl_toggling_txt');	
-
+                        setTimeout(function() {
+                            $('#lcl_wrap').removeClass('lcl_toggling_txt');
+                            
 							if(txt_on_side && !forced_over) {
-								$('#lcl_subj').fadeTo(timing, 1);	
+								$('#lcl_subj').stop().fadeTo(elems_fade_timing, 1);	
 							} else {
 								if(!forced_over) {
-									$('#lcl_contents_wrap').fadeTo(timing, 1);	
+									$('#lcl_contents_wrap').stop().fadeTo(elems_fade_timing, 1);	
 								}
 							}
-						}, (o.animation_time * 2) + 50);
+						}, restore_timing);
 					}
 				}
 				
@@ -2390,74 +2622,50 @@
 		});	
 		
 		
+        
 		/* start/end slideshow */
 		$(document).on('click', '.lcl_play', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
-			
-			if($('.lcl_is_playing').length) {
-				lcl_stop_slideshow();
-			} else {
-				lcl_start_slideshow();
-			}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
+			($('.lcl_is_playing').length) ? lcl_stop_slideshow() : lcl_start_slideshow();
 		});	
 		
-		
-		/* track video start on click */
-		$(document).on('click', '.lcl_elem', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
-			
-			if(!$('.lcl_playing_video').length && $.inArray($('#lcl_wrap').attr('lcl-type'), ['video']) !== -1) {
-				
-				lcl_stop_slideshow();
-				$('#lcl_wrap').addClass('lcl_playing_video');	
-			}
-		});
-		
-		/* trick to detect click on iframes */
-		var lcl_iframe_click = function() {
-			if(typeof(lcl_iframe_click_intval) != 'undefined') {clearInterval(lcl_iframe_click_intval);}
-			
-			lcl_iframe_click_intval = setInterval(function() {
-				var $ae = $(document.activeElement); 
-				
-				if($ae.is('iframe') && $ae.hasClass('lcl_elem') && ($('.lcl_youtube_elem').length || $('.lcl_vimeo_elem').length || $('.lcl_dailymotion_elem').length)) {
-					lcl_stop_slideshow();
-					$('#lcl_wrap').addClass('lcl_playing_video');	
-					
-					clearInterval(lcl_iframe_click_intval);	
-				}
-			}, 300);
-		};
-		
+
 
 		/* toggle socials */
 		$(document).on('click', '.lcl_socials', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			
 			// show
 			if(!$('.lcl_socials > div').length) {
-				var el = lcl_curr_vars.elems[ lcl_curr_vars.elem_index ];
-				var page_url = encodeURIComponent(window.location.href);
-				
-				var title = encodeURIComponent(el.title).replace(/'/g, "\\'");
-				var descr = encodeURIComponent(el.txt).replace(/'/g, "\\'");
+				const el = lcl_curr_vars.elems[ lcl_curr_vars.elem_index ],
+                      page_url = encodeURIComponent(window.location.href),
+                      title = encodeURIComponent(el.title).replace(/'/g, "\\'"),
+                      descr = encodeURIComponent(el.txt).replace(/'/g, "\\'");
 
 				// find image's URL
+                let img;
 				if(el.type == 'image') {
-					var img = el.src;
-				} else {
-					var img = (el.poster) ? el.poster : false;
-					if(!img && typeof(el.vid_poster) != 'undefined') {img = el.vid_poster;}
+					img = el.src;
+				}
+                else {
+					img = (el.poster) ? el.poster : false;
+					if(!img && typeof(el.vid_poster) != 'undefined') {
+                        img = el.vid_poster;
+                    }
 				}
 
 
 				// prepare and append code
-				var code = 
+				let code = 
 				'<div class="lcl_socials_tt lcl_tooltip lcl_tt_bottom">';
 				
 					if(lcl_curr_opts.fb_share_params) {
 						
-						var share_url = page_url;
+						let share_url = page_url;
 						share_url += (window.location.href.indexOf('?') === -1) ? '%3F' : '%26';
 						share_url += encodeURIComponent(lcl_curr_opts.fb_share_params.replace('%TITLE%', title).replace('%DESCR%', descr).replace('%IMG%', img)); 
 						
@@ -2478,11 +2686,6 @@
 						code += 	
 						'<a class="lcl_icon lcl_pint" onClick="window.open(\'http://pinterest.com/pin/create/button/?url='+ page_url +'&media='+ encodeURIComponent(img) +'&description='+ title +'\',\'sharer\',\'toolbar=0,status=0,width=575,height=330\');" href="javascript: void(0)" title="share on Pinterest" aria-label="share on Pinterest" tabindex="64"></a>';
 					}
-                
-                    // allow URL copy for deplinked lightbox
-                    if(lcl_curr_opts.deeplink) {
-                        code += '<a class="lcl_icon lcl_copy_dlu" href="javascript:void(0);" data-action="share/whatsapp/share" title="copy lightbox link" aria-label="copy lightbox link" tabindex="65"></a>';
-                    }
 				
 				code += 	
 				'</div>';
@@ -2492,30 +2695,6 @@
 				setTimeout(function() { // delay to let CSS execute animation
 					$('.lcl_socials_tt').addClass('lcl_show_tt');
 				}, 20);
-				
-				
-				// FB direct share
-				if(lcl_curr_opts.fb_direct_share) {
-					$(document).off('click', '.lcl_fb').on('click', '.lcl_fb', function(e) {
-						
-						FB.ui({
-							method: 'share_open_graph',
-							action_type: 'og.shares',
-							action_properties: JSON.stringify({
-								object: {
-									'og:url'		: window.location.href,
-									'og:title'		: el.title,
-									'og:description': el.txt,
-									'og:image'		: img,
-								}
-							})
-						},
-						function (response) {
-							window.close();
-						});			
-						
-					});
-				}
 			}
 			
 			// hide	
@@ -2531,7 +2710,9 @@
 		
 		/* toggle fullscreen via button */
 		$(document).on('click', '.lcl_fullscreen', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			
 			if($('.lcl_fullscreen_mode').length) {
 				exit_fullscreen(true);
@@ -2544,11 +2725,12 @@
 		
 		/* thumbs navigator - toggle */
 		$(document).on('click', '.lcl_thumbs_toggle', function(e) {		
-			if(obj != lcl_curr_obj) {return true;}
-			
-			var fs_mode = $('.lcl_fullscreen_mode').length;
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
+			const fs_mode = $('.lcl_fullscreen_mode').length;
+            
 			$('#lcl_wrap').addClass('lcl_toggling_tn').toggleClass('lcl_tn_hidden');
-			
 			
 			// if not fullscreen - hide contents
 			if(!fs_mode) {
@@ -2558,25 +2740,28 @@
 			}
 
 			setTimeout(function() {
-				$('#lcl_wrap').removeClass('lcl_toggling_tn');
+                $('#lcl_wrap').removeClass('lcl_toggling_tn');
 			}, lcl_curr_opts.animation_time + 50);
 		});	
 		
 		
+        
 		/* thumbs navigator - switch element */
-		var tn_track_touch = (lcl_on_mobile) ? ' click' : '';
-		
-		$(document).on('lcl_tn_elem_click'+tn_track_touch, '.lcl_tn_inner > li', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
-			
-			var elem_id = $(this).attr('rel');
-			switch_elem( elem_id );
+		$(document).on('click lcl_tn_elem_click', '.lcl_tn_inner > li:not(.lcl_sel_thumb)', function(e) {
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
+            
+			switch_elem( $(this).attr('rel') );
 		});	
 		
+        
 		
 		/* thumbs navigator - navigate with arrows click */
 		$(document).on('click', '.lcl_tn_prev:not(.lcl_tn_disabled_arr)', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			
 			$('.lcl_tn_inner').stop(true).animate({"scrollLeft" : ($('.lcl_tn_inner').scrollLeft() - lcl_curr_opts.thumbs_w - 10)}, 300, 'linear', function() {
 				$('.lcl_tn_inner').trigger('lcl_smoothscroll_end');	
@@ -2584,7 +2769,9 @@
 		});	
 		
 		$(document).on('click', '.lcl_tn_next:not(.lcl_tn_disabled_arr)', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			
 			$('.lcl_tn_inner').stop(true).animate({"scrollLeft" : ($('.lcl_tn_inner').scrollLeft() + lcl_curr_opts.thumbs_w + 10)}, 300, 'linear', function() {
 				$('.lcl_tn_inner').trigger('lcl_smoothscroll_end');	
@@ -2592,44 +2779,53 @@
 		});	
 		
 		
+        
 		/* thumbs navigator -  navigate with mousewheel */
 		$(document).on('wheel', '#lcl_thumbs_nav.lcl_tn_has_arr', function(e) {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			
 			e.preventDefault();
-			var delta = e.originalEvent.deltaY;
+			const delta = e.originalEvent.deltaY;
 			
-			if(delta > 0) 	{$('.lcl_tn_prev:not(.lcl_tn_disabled_arr)').trigger('click');}
-			else 			{$('.lcl_tn_next:not(.lcl_tn_disabled_arr)').trigger('click');}
+			(delta > 0) ? $('.lcl_tn_prev:not(.lcl_tn_disabled_arr)').trigger('click') : $('.lcl_tn_next:not(.lcl_tn_disabled_arr)').trigger('click');
 		});
 		
+        
 		
 		/* right click prevent */
 		$(document).on("contextmenu", "#lcl_wrap *", function() {
-			if(obj != lcl_curr_obj) {return true;}
+			if(obj != lcl_curr_obj) {
+                return true;
+            }
 			
 			if(lcl_ai_opts.rclick_prevent) {
 				return false;
 			}
 		}); 
 		
+        
 		
 		/* avoid page scrolling on touch devices */ 
 		$(window).on('touchmove', function(e) {
-			var $t = $(e.target);
-			if(!lcl_shown || !lcl_on_mobile) {return true;}
-			if(obj != lcl_curr_obj) {return true;}
-
+			if(!lcl_shown || !lcl_on_mobile || obj != lcl_curr_obj) {
+                return true;
+            }
+            const $t = $(e.target);
 			
 			if(!$(e.target).parents('#lcl_window').length && !$(e.target).parents('#lcl_thumbs_nav').length) {
 				e.preventDefault();
 			}
 		});
-		
+        
+        
         
         /* copy lightbox link - share option */
         $(document).on('click', '.lcl_copy_dlu', function(e) {
-            if(obj != lcl_curr_obj) {return true;}
+            if(obj != lcl_curr_obj) {
+                return true;
+            }
             e.preventDefault();
             
             navigator.clipboard.writeText(window.location.href);
@@ -2637,14 +2833,17 @@
         });
         
         
+        
         /* change focus on nav commands */
         $(document).on('keydown', function(e) {
-            if(obj != lcl_curr_obj) {return true;}
+            if(obj != lcl_curr_obj) {
+                return true;
+            }
             
             if(e.key === "Tab" && $('.lcl_shown').length) {
                 e.preventDefault();
                 
-                let focusableElements = $('#lcl_wrap').find('#lcl_corner_close, #lcl_nav_cmd button.lcl_icon, #lcl_nav_cmd a.lcl_icon').not('.lcl_zoom_disabled, :hidden').sort((a, b) => (a.tabIndex || 0) - (b.tabIndex || 0)),
+                let focusableElements = $('#lcl_wrap').find('#lcl_corner_close, #lcl_nav_cmd button.lcl_icon, #lcl_nav_cmd a.lcl_icon').not(':hidden').sort((a, b) => (a.tabIndex || 0) - (b.tabIndex || 0)),
                     index = focusableElements.index(document.activeElement);
 
                 index = ((index + 1) >= focusableElements.length) ? 0 : index + 1;
@@ -2655,7 +2854,9 @@
         
         // remove focus status on click to not display the outline
         $(document).on('mousedown', '#lcl_nav_cmd a, #lcl_nav_cmd button', function(e) {
-            if(obj != lcl_curr_obj) {return true;}
+            if(obj != lcl_curr_obj) {
+                return true;
+            }
             
             const $this = $(this);
             setTimeout(() => {
@@ -2667,89 +2868,126 @@
 		/////////////////////////////////////////////////////////////
 		
 		
-		// touchswipe & zoom on pinch - requires alloy_finger.min.js
-		var touch_events = function() {
-			if(typeof(AlloyFinger) != 'function') {return false;}
-			lcl_is_pinching = false;
-			
-			var el = document.querySelector('#lcl_wrap');
-			var af = new AlloyFinger(el, {
-				singleTap: function(e) {
-					
-					// close lb tapping on overlay
-					if($(e.target).attr('id') == 'lcl_overlay' && !lcl_ai_opts.modal) {
-						lcl_close();	
-					}
-				},
-				doubleTap: function (e) {
-					e.preventDefault();
-					zoom(true);
-				},
-				pinch: function(e) {
-					e.preventDefault();
-					lcl_is_pinching = true;
-					
-					if(typeof(lcl_swipe_delay) != 'undefined') {clearTimeout(lcl_swipe_delay);}
-					
-					if(typeof(lcl_pinch_delay) != 'undefined') {clearTimeout(lcl_pinch_delay);}
-					lcl_pinch_delay = setTimeout(function() {
+		// touchswipe
+        const touch_events = function() {
+            const el = $('#lcl_subj');
 
-						if(e.scale > 1.2) {
-							zoom(true);	
-						} 
-						else if(e.scale < 0.8) {
-							zoom(false);	
-						}
-						
-						// avoid swipe if zoom-out
-						setTimeout(function() {
-							lcl_is_pinching = false;
-						}, 300);
-					}, 20);
-				},
-				touchStart: function(e) {
-					lcl_touchstartX = e.changedTouches[0].clientX;
-				},
-				touchEnd: function(e) { // simulate swipe with treshold
-					var diff = lcl_touchstartX - e.changedTouches[0].clientX;
-					
-					if((diff < -50 || diff > 50) && !lcl_is_pinching) {
+            let touchStartX = 0,
+                touchStartY = 0,
+                touchEndX = 0,
+                touchEndY = 0,
+                touchStartTime = 0,
+                lastTap = 0,
+                zoom_debounce,
+                lcl_is_pinching = false,
+                pinchStartDistance = 0,
+                lcl_pinch_delay,
+                lcl_swipe_delay;
 
-						// ignore if consulting thumbs nav
-						if($(e.target).parents('#lcl_thumbs_nav').length) {
-							return false;
-						}
-						
-						// do not swipe on zoomed
-						if($(e.target).parents('.lcl_zoom_wrap').length) {
-							return false;	
-						}
+            // Single Tap e Double Tap
+            el.on('touchend', function(e) {
+                // ignore if there are multiple fingers
+                if(e.originalEvent.touches.length > 0) {
+                    return;
+                }
 
-						var delay = ($(e.target).parents('.lcl_zoomable').length) ? adjusted_fading_time() : 0;
-						if(typeof(lcl_swipe_delay) != 'undefined') {clearTimeout(lcl_swipe_delay);}
-						
-						lcl_swipe_delay = setTimeout(function() {
-	
-							if(diff < -50) {
-								switch_elem('prev');	
-							}
-							else {
-								switch_elem('next');	
-							}
-						}, delay);	
-					}
-				}
-			});
-		};
+                const currentTime = new Date().getTime(),
+                      tapLength = currentTime - lastTap;
+
+                // Double Tap (due tap entro 300ms)
+                if(tapLength < 300 && tapLength > 0) {
+                    
+                } 
+                
+                // Single Tap
+                else {
+                    lastTap = currentTime;
+                    setTimeout(function() {
+                        if(lastTap === currentTime) {
+                            if($(e.target).attr('id') === 'lcl_overlay' && !lcl_ai_opts.modal) {
+                                lcl_close();
+                            }
+                        }
+                    }, 300);
+                }
+            });
+
+            el.on('touchmove', function(e) {
+                const touches = e.originalEvent.touches;
+
+                if(touches.length === 2) {
+                    e.preventDefault();
+                    lcl_is_pinching = true;
+
+                    if(typeof lcl_swipe_delay !== 'undefined') {
+                        clearTimeout(lcl_swipe_delay);
+                    }
+                    if(typeof lcl_pinch_delay !== 'undefined') {
+                        clearTimeout(lcl_pinch_delay);
+                    }
+
+                    const dx = touches[0].clientX - touches[1].clientX,
+                          dy = touches[0].clientY - touches[1].clientY,
+                          currentDistance = Math.sqrt(dx * dx + dy * dy),
+                          scale = currentDistance / pinchStartDistance;
+                }
+            });
+
+            el.on('touchend', function(e) {
+                if(e.originalEvent.touches.length === 0) {
+                    setTimeout(function() {
+                        lcl_is_pinching = false;
+                        pinchStartDistance = 0;
+                    }, 100);
+                }
+            });
+
+            // Swipe tracking
+            $('#lcl_wrap').on('touchstart', function(e) {
+                const touches = e.originalEvent.touches;
+                touchStartX = touches[0].clientX;
+                touchStartY = touches[0].clientY;
+                touchStartTime = new Date().getTime();
+            });
+
+            // swipe-up to close lightbox
+            $('#lcl_wrap').on('touchend', function(e) {
+                if(lcl_is_pinching) {
+                    return;
+                }
+
+                const changedTouches = e.originalEvent.changedTouches;
+                touchEndX = changedTouches[0].clientX;
+                touchEndY = changedTouches[0].clientY;
+
+                const deltaY = touchStartY - touchEndY,
+                      deltaX = Math.abs(touchStartX - touchEndX),
+                      viewportHeight = $(window).height(),
+                      swipeThreshold = viewportHeight * 0.4,
+                      touchDuration = new Date().getTime() - touchStartTime;
+
+                if(
+                    deltaY > swipeThreshold && 
+                    deltaY > deltaX && 
+                    touchDuration < 500 && 
+                    !lcl_ai_opts.modal
+                ) {
+                    lcl_close();
+                }
+            });
+        };
 
 
 		/////////////////////////////////////////////////////////////
 		
 		
 		//// PUBLIC METHODS
+        
 		// set current settings and vars - for actions with lightbox opened - return false if object not initialized
-		var set_curr_vars = function() {
-			if(!lcl_curr_obj) {return false;}
+		const set_curr_vars = function() {
+			if(!lcl_curr_obj) {
+                return false;
+            }
 			
 			lcl_ai_vars = $.data(lcl_curr_obj, 'lcl_vars');
 			lcl_ai_opts = $.data(lcl_curr_obj, 'lcl_settings');
@@ -2761,11 +2999,12 @@
 			return true;
 		};
 		
+        
 		
 		// open lightbox
 		lcl_open = function(obj, index) {
 			lcl_ai_vars = $.data(obj, 'lcl_vars');
-			var v = lcl_ai_vars;
+			let v = lcl_ai_vars;
 
 			// check instance existence
 			if(!v) {
@@ -2783,20 +3022,24 @@
 				return open_lb(obj, $clicked_obj);	
 			}
 		};
-		
+        
 		
 		// resize lightbox
 		lcl_resize = function() {
-			if(!lcl_shown || lcl_is_active || !set_curr_vars()) {return false;}
+			if(!lcl_shown || lcl_is_active || !set_curr_vars()) {
+                return false;
+            }
 			
-			var v = lcl_ai_vars;
-			if(typeof(lcl_size_check) != 'undefined') {clearTimeout(lcl_size_check);}
+			let v = lcl_ai_vars;
+			if(typeof(lcl_size_check) != 'undefined') {
+                clearTimeout(lcl_size_check);
+            }
 			
 			lcl_size_check = setTimeout(function() {
 				$('#lcl_wrap').addClass('lcl_is_resizing');
 				thumbs_nav_arrows_opacity();
 				
-				var el = v.elems[ v.elem_index ];
+				const el = v.elems[ v.elem_index ];
 				return size_elem(el);
 			}, 20);	
 		};
@@ -2804,22 +3047,28 @@
 		
 		// close lightbox and destroy vars
 		lcl_close = function() {
-			if(!lcl_shown || lcl_is_active || !set_curr_vars()) {return false;}
+			if(!lcl_shown || lcl_is_active || !set_curr_vars()) {
+                return false;
+            }
 			return close_lb();
 		};	
 		
 		
 		// pagination (next/prev/index)
 		lcl_switch = function(new_el) {
-			if(!lcl_shown || lcl_is_active || !set_curr_vars()) {return false;}
+			if(!lcl_shown || lcl_is_active || !set_curr_vars()) {
+                return false;
+            }
 			return switch_elem(new_el);
 		};
 		
 		
 		// start slideshow
 		lcl_start_slideshow = function(restart) {
-			if(!lcl_shown || (typeof(restart) == 'undefined' && typeof(lcl_slideshow) != 'undefined') || !set_curr_vars()) {return false;}
-			var o = lcl_ai_opts;
+			if(!lcl_shown || (typeof(restart) == 'undefined' && typeof(lcl_slideshow) != 'undefined') || !set_curr_vars()) {
+                return false;
+            }
+			const o = lcl_ai_opts;
 
 			// if is latest element and isn't carousel - return false
 			if(!o.carousel && lcl_ai_vars.elem_index == (lcl_ai_vars.elems.length - 1)) {
@@ -2829,7 +3078,7 @@
 			if(typeof(lcl_slideshow) != 'undefined') {clearInterval(lcl_slideshow);} // if reset timing
 			$('#lcl_wrap').addClass('lcl_is_playing');
 			
-			var time = o.animation_time + o.slideshow_time;
+			const time = o.animation_time + o.slideshow_time;
 			
 			// use progressbar?
 			progbar_animate(true);
@@ -2860,10 +3109,13 @@
 		};
 		
 		
+        
 		// stop slideshow
 		lcl_stop_slideshow = function() {
-			if(!lcl_shown || typeof(lcl_slideshow) == 'undefined' || !set_curr_vars()) {return false;}
-			var o = lcl_ai_opts;
+			if(!lcl_shown || typeof(lcl_slideshow) == 'undefined' || !set_curr_vars()) {
+                return false;
+            }
+			const o = lcl_ai_opts;
 
 			// check instance existence
 			if(!o) {
@@ -2871,7 +3123,9 @@
 				return false;	
 			}
 			
-			clearInterval(lcl_slideshow); lcl_slideshow = undefined;
+			clearInterval(lcl_slideshow);
+            lcl_slideshow = undefined;
+            
 			$('#lcl_wrap').removeClass('lcl_is_playing');
 			
 			$('#lcl_progressbar').stop(true).animate({'marginTop' : ($('#lcl_progressbar').height() * -3)}, 300, function() {
@@ -2887,7 +3141,7 @@
 			
 			// slideshow end - hook
 			if(!lcl_ai_vars.is_arr_instance) {
-				var $subj = (lcl_ai_vars.elems_selector) ? $(lcl_ai_vars.elems_selector) : lcl_curr_obj;
+				const $subj = (lcl_ai_vars.elems_selector) ? $(lcl_ai_vars.elems_selector) : lcl_curr_obj;
 				$subj.first().trigger('lcl_slideshow_end', []);
 			}
 

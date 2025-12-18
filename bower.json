@@ -1,6 +1,6 @@
 {
   "name": "lc-lightbox-lite",
-  "description": "LC Lightbox is a super customizable jQuery lightbox supporting any content type!",
+  "description": "LC Lightbox is a gesture-powered, highly customizable jQuery lightbox that supports any type of content!",
   "main": [
   	"js/lc_lightbox.lite.js",
 	"css/lc_lightbox.css"
