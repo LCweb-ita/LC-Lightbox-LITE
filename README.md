@@ -1,9 +1,9 @@
 # LC Lightbox (LITE)
-LC Lightbox is a modern jQuery lightbox focused on contents.<br/> 
+LC Lightbox is a modern, gesture-powered, jQuery lightbox focused on contents.<br/> 
 Totally responsive and adaptive, is extremely flexible to be tailored in the minimum details!
 
 Hassle-free and immediate setup using an unique javascript file. <br/>
-Overall plugin weight is only 43KB (JS) + 33KB (CSS)
+Overall plugin weight is only 43KB (JS) + 31KB (CSS)
 
 ![lc-lightbox](https://static.lcweb.it/lc-lightbox-lite/lcl_github_img.png)
 
@@ -33,7 +33,7 @@ Main features
 * HTML support in element descriptions
 * 100% CSS Driven
 * (optional) Mousewheel and Keyboard elements navigation
-* Swipe integration to navigate (requires AlloyFinger)
+* Swipe integration to navigate
 * Dev-oriented and well-documented [methods & Events](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/?section=methods)
 * 4 layouts (text over element, under element or on right/left side)
 * (optional) closing button on corner position <em>(for inner commands)</em>
@@ -61,7 +61,6 @@ Requirements
 
 * Any modern browser (IE 11+)
 * jQuery v1.7+
-* To implement touch actions you need to use [AlloyFinger](https://github.com/AlloyTeam/AlloyFinger/) (file included in LIB folder)
 
 
 &nbsp;
@@ -97,16 +96,8 @@ You can purchase the fully-featured premium version on the [LCweb Shop](https://
 Extra
 ---
 
-Premium LC Lightbox version is implemented in the premium WordPress plugin [Global Gallery](https://lcweb.it/global-gallery-wordpress-photogallery-plugin/)
+Premium LC Lightbox version is implemented in the premium WordPress plugin [Global Gallery](https://lcweb.it/global-gallery-wordpress-photogallery-plugin/?ref=lcl_github)
 
-
-&nbsp;
-
-
-Fun Fact
----
-
-Why release starts from v1.1? LC Lightbox has been used and developed for [Global Gallery](https://lcweb.it/global-gallery-wordpress-photogallery-plugin/) WordPress plugin in 2017!
 
 * * *
 
