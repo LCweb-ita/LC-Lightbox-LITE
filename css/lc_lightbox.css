@@ -718,7 +718,7 @@
     min-height: 34px;
     min-width: 34px;
 	cursor: pointer;
-	z-index: 150;
+	z-index: 150000;
     text-decoration: none;
 	transition: opacity .3s ease;
 }
