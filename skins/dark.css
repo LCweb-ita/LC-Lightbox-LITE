@@ -144,24 +144,6 @@
 }
 
 
-/* text block shadow */
-.lcl_dark.lcl_txt_rside:not(.lcl_force_txt_over) #lcl_txt:after {
-    content: "";
-	background: linear-gradient(to right, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 100%);
-    left: 0;
-}
-.lcl_dark.lcl_txt_lside:not(.lcl_force_txt_over) #lcl_txt:after {
-    content: "";
-	background: linear-gradient(to left, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 100%);
-    right: 0;
-}
-.lcl_dark.lcl_txt_under:not(.lcl_force_txt_over) #lcl_txt::after {
-    content: "";
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%,rgba(0, 0, 0, 0) 100%);
-	height: 3px;
-}
-
-
 
 /* TOOLTIP */
 .lcl_dark .lcl_tooltip.lcl_tt_bottom:before {

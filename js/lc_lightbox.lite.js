@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	2.0.1
+  * @version	: 	2.0.2
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -922,8 +922,9 @@
 				$subj.first().trigger('lcl_html_is_ready', [lcl_ai_opts, lcl_ai_vars]);
 			}
             
-            
-            drag_n_drop_nav();
+            if(o.gallery && $('.lcl_next').length) {
+                drag_n_drop_nav();
+            }
 		};
 		
 		
@@ -1287,6 +1288,11 @@
             }
 
             
+            // text under - must reduce height by the margin value to avoid huge spaces
+            if(elem_has_txt(el) && !$('.lcl_hidden_txt').length && o.data_position === 'under' && !flags.no_txt_under) {
+                h = h - parseInt(o.padding, 10);
+            }
+            
 			// reset text under var
 			v.txt_und_sizes = false;
 	
@@ -1474,7 +1480,7 @@
 				// no overflow - ok
 				else {
 					$('#lcl_wrap').removeClass('lcl_txt_under_calc');
-					$('#lcl_subj').css('maxHeight', (curr_h + lcl_ai_opts.padding));
+					$('#lcl_subj').css('maxHeight', curr_h);
 					
 					lcl_ai_vars.txt_und_sizes = {
 						w: curr_w, 
