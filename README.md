@@ -34,7 +34,7 @@ Main features
 * 100% CSS Driven
 * (optional) Mousewheel and Keyboard elements navigation
 * Swipe integration to navigate
-* Dev-oriented and well-documented [methods & Events](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/?section=methods)
+* Dev-oriented and well-documented [methods & Events](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/?section=methods&utm_source=lcl_github)
 * 4 layouts (text over element, under element or on right/left side)
 * (optional) closing button on corner position <em>(for inner commands)</em>
 * (optional) navigation buttons on middle position <em>(for inner commands)</em>
@@ -50,7 +50,7 @@ Main features
 * Modal mode
 * Supporting aria-labels and tab-to-select-commands accessibility methods
 * Thumbnails script support (eg. easily integrates with Timthumb)
-* MUCH MORE! [check lightbox options](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/?section=opts)
+* MUCH MORE! [check lightbox options](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/?section=opts&utm_source=lcl_github)
 
 
 &nbsp;
@@ -68,7 +68,7 @@ Requirements
 
 Live Demo
 ---
-[https://lcweb.it/lc-lightbox-jquery-plugin/](https://lcweb.it/lc-lightbox-jquery-plugin/)
+[https://lcweb.it/lc-lightbox-jquery-plugin/](https://lcweb.it/lc-lightbox-jquery-plugin/?utm_source=lcl_github)
 
 
 &nbsp;
@@ -76,7 +76,7 @@ Live Demo
 
 Documentation
 ---
-[https://lcweb.it/lc-lightbox-jquery-plugin/documentation/](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/)
+[https://lcweb.it/lc-lightbox-jquery-plugin/documentation/](https://lcweb.it/lc-lightbox-jquery-plugin/documentation/?utm_source=lcl_github)
 
 Optionally you can install the plugin via Bower, using this instruction: `bower install lc-lightbox-lite`
 
@@ -87,7 +87,7 @@ License
 ---
 
 LC Lightbox LITE is free and released under the MIT license.<br/>
-You can purchase the fully-featured premium version on the [LCweb Shop](https://lcweb.it/lc-lightbox-jquery-plugin/)
+You can purchase the fully-featured premium version on the [LCweb Shop](https://lcweb.it/lc-lightbox-jquery-plugin/?utm_source=lcl_github)
  
 
 &nbsp;
