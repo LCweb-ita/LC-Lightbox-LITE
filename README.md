@@ -3,7 +3,7 @@ LC Lightbox is a modern, gesture-powered, jQuery lightbox focused on contents.<b
 Totally responsive and adaptive, is extremely flexible to be tailored in the minimum details!
 
 Hassle-free and immediate setup using an unique javascript file. <br/>
-Overall plugin weight is only 43KB (JS) + 31KB (CSS)
+Overall plugin weight is only 44KB (JS) + 31KB (CSS)
 
 ![lc-lightbox](https://static.lcweb.it/lc-lightbox-lite/lcl_github_img.png)
 
@@ -96,7 +96,7 @@ You can purchase the fully-featured premium version on the [LCweb Shop](https://
 Extra
 ---
 
-Premium LC Lightbox version is implemented in the premium WordPress plugin [Global Gallery](https://lcweb.it/global-gallery-wordpress-photogallery-plugin/?ref=lcl_github)
+Premium LC Lightbox version is implemented in the premium WordPress plugin [Global Gallery](https://lcweb.it/global-gallery-wordpress-photogallery-plugin/?utm_source=lcl_github)
 
 
 * * *

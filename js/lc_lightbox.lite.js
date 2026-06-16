@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	2.0.2
+  * @version	: 	2.1.0
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -135,6 +135,7 @@
 			ol_opacity		: 0.7, // overlay opacity / value between 0 and 1
 			ol_color		: '#111', // background color of the overlay
 			ol_pattern		: false, // overlay patterns - insert the pattern name or false
+            side_txt_w		: 330, // side text width
 			border_w		: 0, // width of the lightbox border in pixels 
 			border_col		: '#ddd', // color of the lightbox border
 			padding			: 0, // width of the lightbox padding in pixels
@@ -830,12 +831,18 @@
 				}
 			}
             
-            if(['rside', 'lside'].includes(o.data_position) && (o.animation_time - 20) < 300) {
-                css += 
-                    '.lcl_txt_rside:not(.lcl_force_txt_over) #lcl_txt,'+
-                    '.lcl_txt_lside:not(.lcl_force_txt_over) #lcl_txt {'+
-                        'transition-duration: '+ (o.animation_time - 20) +'ms;'+
-                    '}';
+            if(['rside', 'lside'].includes(o.data_position)) {
+                if(parseInt(o.side_txt_w, 10)) {
+                    document.documentElement.style.setProperty('--lcl-side-txt-w', o.side_txt_w +'px');
+                }
+                
+                if((o.animation_time - 20) < 300) {
+                    css += 
+                        '.lcl_txt_rside:not(.lcl_force_txt_over) #lcl_txt,'+
+                        '.lcl_txt_lside:not(.lcl_force_txt_over) #lcl_txt {'+
+                            'transition-duration: '+ (o.animation_time - 20) +'ms;'+
+                        '}';
+                }
             }
             
             if(o.remove_scrollbar) {
