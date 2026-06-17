@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	2.1.0
+  * @version	: 	2.1.0a
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -1243,16 +1243,14 @@
                         const media_max_w = max_w - side_txt,
                               media_max_h = max_h;
 
-                        const img_ratio = img_sizes.w / img_sizes.h,
-                              box_ratio = media_max_w / media_max_h;
+                        const scale = Math.min(
+                            media_max_w / img_sizes.w,
+                            media_max_h / img_sizes.h,
+                            1 // never upscale
+                        );
 
-                        if(img_ratio > box_ratio) {
-                            w = media_max_w;
-                            h = Math.round(w / img_ratio);
-                        } else {
-                            h = media_max_h;
-                            w = Math.round(h * img_ratio);
-                        }
+                        w = Math.round(img_sizes.w * scale);
+                        h = Math.round(img_sizes.h * scale);
 
                         if(elem_has_txt(el) && !$('.lcl_hidden_txt').length && o.data_position === 'under' && !flags.no_txt_under) {
                             txt_under_h(w, h, media_max_h);
