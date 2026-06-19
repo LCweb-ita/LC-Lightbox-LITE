@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	2.1.0a
+  * @version	: 	2.1.1
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -30,7 +30,7 @@
 	// lightbox structure
 	let lb_code =
 	'<div id="lcl_wrap" class="lcl_pre_show lcl_pre_first_el lcl_first_sizing lcl_is_resizing">'+
-		'<div id="lcl_window">'+
+		'<div id="lcl_window" tabindex="-1">'+
 			'<a href="javascript:void(0);" id="lcl_corner_close" title="close" aria-label="close" tabindex="300"></a>'+
 			'<div id="lcl_loader" class="lcl_loader_pre_first_el"><span id="lcll_1"></span><span id="lcll_2"></span></div>'+
 			'<div id="lcl_nav_cmd">'+
@@ -687,8 +687,6 @@
 			// prepare first element and show
 			maybe_preload(true);
 			close_img_preload();
-            
-            $('#lcl_nav_cmd').focus();
 		};
 		
 		
