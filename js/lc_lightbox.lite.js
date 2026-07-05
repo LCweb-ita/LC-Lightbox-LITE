@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	2.1.2
+  * @version	: 	2.2.0
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -711,12 +711,10 @@
 			if($('#lcl_wrap').length) {
                 $('#lcl_wrap').remove();
             }
-			$('body').append(lb_code);	
-			
+			let $lb = $(lb_code);	
 			
 			// lightbox max sizes
-			$('#lcl_wrap').attr('data-lcl-max-w', o.max_width).attr('data-lcl-max-h', o.max_height);
-
+			$lb.attr('data-lcl-max-w', o.max_width).attr('data-lcl-max-h', o.max_height);
 
 			// command positions classes
 			wrap_classes.push('lcl_'+o.ins_close_pos+'_close lcl_nav_btn_'+o.nav_btn_pos+' lcl_'+ o.ins_close_pos +'_close lcl_nav_btn_'+ o.nav_btn_pos);	
@@ -742,6 +740,11 @@
 				wrap_classes.push('lcl_no_carousel');	
 			}
 			
+			// comments class
+			if(o.comments) {
+				wrap_classes.push('lcl_has_comments');	
+			}
+			
 			// mobile class
 			if(lcl_on_mobile) {
                 wrap_classes.push('lcl_on_mobile');
@@ -755,29 +758,32 @@
 			// manage elements
 			wrap_classes.push('lcl_'+ o.cmd_position +'_cmd');
 			if(o.cmd_position != 'inner') {
-				const nav = $('#lcl_nav_cmd').detach();
-				$('#lcl_wrap').prepend(nav);	
+				const nav = $lb.find('#lcl_nav_cmd').detach();
+				$lb.prepend(nav);	
 			}
 			
-			if(!o.slideshow)		{$('.lcl_play').remove();}
-			if(!o.txt_toggle_cmd) 	{$('.lcl_txt_toggle').remove();}
-			if(!o.socials) 			{$('.lcl_socials').remove();}
-			if(!o.download) 		{$('.lcl_download').remove();}
-			if(!o.counter || v.elems.length < 2 || !o.gallery) {$('.lcl_counter').remove();}
+            
+			// manage inner elements
+			if(!o.slideshow)		{$lb.find('.lcl_play').remove();}
+			if(!o.txt_toggle_cmd) 	{$lb.find('.lcl_txt_toggle').remove();}
+			if(!o.socials) 			{$lb.find('.lcl_socials').remove();}
+			if(!o.download) 		{$lb.find('.lcl_download').remove();}
+			if(!o.img_zoom)			{$lb.find('.lcl_zoom_icon').remove();}
+			if(!o.counter || v.elems.length < 2 || !o.gallery) {$lb.find('.lcl_counter').remove();}
 			
 			// fullscreen
 			v.force_fullscreen = false;
 			if(!o.fullscreen) {
-				$('.lcl_fullscreen').remove();
+				$lb.find('.lcl_fullscreen').remove();
 			}
 			else if(o.fs_only === true || (typeof(o.fs_only) == 'number' && ($(window).width() < o.fs_only || $(window).height() < o.fs_only))) {
-				$('.lcl_fullscreen').remove();
+				$lb.find('.lcl_fullscreen').remove();
 				lcl_ai_vars.force_fullscreen = true;
 			}
 				
 			// prev/next buttons
 			if(v.elems.length < 2 || !o.gallery) {
-				$('.lcl_prev, .lcl_play, .lcl_next').remove();
+				$lb.find('.lcl_prev, .lcl_play, .lcl_next').remove();
 			} else {
 				if(o.nav_btn_pos == 'middle') {
 					css += '.lcl_prev, .lcl_next {margin: '+ o.padding +'px;}';
@@ -785,11 +791,37 @@
 			}
 			
 			// thumbs nav
+            let thumbs_removed = false;
 			if(!o.thumbs_nav || lcl_ai_vars.elems.length < 2 || !o.gallery) {
-				$('#lcl_thumbs_nav, .lcl_thumbs_toggle').remove();
+				$lb.find('#lcl_thumbs_nav, .lcl_thumbs_toggle').remove();
+                thumbs_removed = true;
 			} 
-			else {
-				$('#lcl_thumbs_nav').css('height', o.thumbs_h); // use JS to pick outerHeight after
+			
+			//////
+			
+			// apply skin and layout classes
+			wrap_classes.push('lcl_txt_'+ o.data_position +' lcl_'+ o.skin);
+
+			if(o.ol_pattern) 	{$lb.find('#lcl_overlay').addClass('lcl_pattern_'+ o.ol_pattern);}
+			if(o.modal)			{$lb.find('#lcl_overlay').addClass('lcl_modal');}
+			
+            // opening element could already be shaped?
+			const el = lcl_ai_vars.elems[v.elem_index];
+			if(el.type != 'image' || (el.type == 'image' && typeof(v.img_sizes_cache[el.src]) != 'undefined')) {
+				wrap_classes.push('lcl_show_already_shaped');
+			}
+			
+			// apply all wrap classes built so far to the memory object
+			$lb.addClass( wrap_classes.join(' ') );
+            
+            
+            // only one DOM operation
+            $('body').append($lb);
+
+
+            // manage sizings
+            if(!thumbs_removed) {
+				$('#lcl_thumbs_nav').css('height', o.thumbs_h); 
 				
 				const th_margins = $('#lcl_thumbs_nav').outerHeight(true) - o.thumbs_h; 
 				css += '#lcl_wrap:not(.lcl_toggling_fs):not(.lcl_forced_fullscreen) #lcl_window {margin-top: '+ ((o.thumbs_h - th_margins ) * -1) +'px;}';
@@ -797,15 +829,7 @@
 				// center lightbox if cmds are on top and thumbs are hidden
 				css += '.lcl_tn_hidden.lcl_outer_cmd:not(.lcl_fullscreen_mode) #lcl_window {margin-bottom: '+ ($('.lcl_close').outerHeight(true) * -1) +'px;}';	
 			}
-			
-			//////
-			
-			// apply skin and layout
-			wrap_classes.push('lcl_txt_'+ o.data_position +' lcl_'+ o.skin);
 
-			if(o.ol_pattern) 	{$('#lcl_overlay').addClass('lcl_pattern_'+ o.ol_pattern);}
-			if(o.modal)			{$('#lcl_overlay').addClass('lcl_modal');}
-			
 			if(o.wrap_padding) 	{css += '#lcl_wrap {padding: '+ o.wrap_padding +';}';}
 			if(o.border_w) 		{css += '#lcl_window {border: '+ o.border_w +'px solid '+ o.border_col +';}';}
 			if(o.padding) 		{css += '#lcl_subj, #lcl_txt, #lcl_nav_cmd {margin: '+ o.padding +'px;}';}
@@ -819,8 +843,7 @@
                         'right: '+ ((o.border_w + Math.ceil($('#lcl_corner_close').outerHeight() / 2)) * -1) +'px;'+
                     '}';
 				
-				
-				// if no button is in inner cmd w/ corner close - hide bar (not on FS)
+				// se non c'è nulla eccetto il close, lo nascondiamo
 				if(!$('#lcl_nav_cmd > *:not(.lcl_close)').length) {
 					css += 
                         '#lcl_wrap:not(.lcl_fullscreen_mode):not(.lcl_forced_outer_cmd) #lcl_nav_cmd {'+
@@ -871,10 +894,10 @@
 			'<style type="text/css" id="lcl_inline_style">'+
 			css +
 			'#lcl_overlay {'+
-				'background-color: '+o.ol_color+';'+
-				'opacity: '+o.ol_opacity+';'+
+				'background-color: '+ o.ol_color +';'+
+				'opacity: '+ o.ol_opacity +';'+
 			'}'+
-			'#lcl_window, #lcl_txt, #lcl_subj {'+
+			'#lcl_window, #lcl_txt, #lcl_subj, #lcl_wrap:not(.lcl_fullscreen_mode) .lcl_zoomable > div {'+
 				'transition-duration: '+ o.animation_time +'ms;'+	
 			'}'+  
             '.lcl_toggling_txt #lcl_window, .lcl_toggling_txt #lcl_subj {'+
@@ -897,22 +920,19 @@
 			'}'+
 			'.lcl_fullscreen_mode.lcl_txt_over:not(.lcl_tn_hidden) #lcl_txt, .lcl_fullscreen_mode.lcl_force_txt_over:not(.lcl_tn_hidden) #lcl_txt {'+ /* fs txt margin when thumbs are shown */
 				'max-height: calc(100% - 42px - '+ o.thumbs_h +'px);'+
+			'}'+
+			'.lcl_fullscreen_mode.lcl_playing_video.lcl_txt_over:not(.lcl_tn_hidden) #lcl_txt,'+
+			'.lcl_fullscreen_mode.lcl_playing_video.lcl_force_txt_over:not(.lcl_tn_hidden) #lcl_txt {'+ /* fullscreen txt over margin when thumbs are shown */
+				'max-height: calc(100% - 42px - 45px - '+ o.thumbs_h +'px);'+
 			'}</style>');
 						
 			//////
 	
-			// opening element could already be shaped?
-			const el = lcl_ai_vars.elems[v.elem_index];
-			if(el.type != 'image' || (el.type == 'image' && typeof(v.img_sizes_cache[el.src]) != 'undefined')) {
-				wrap_classes.push('lcl_show_already_shaped');
-			} else {
+
+            // show up
+			if(el.type == 'image' && typeof(v.img_sizes_cache[el.src]) == 'undefined') {
 				rm_pre_show_classes();
 			}
-	
-				
-			// apply wrap classes	
-			$('#lcl_wrap').addClass( wrap_classes.join(' ') );
-			
 			
 			//////
 
@@ -1571,7 +1591,7 @@
 			let v 			= lcl_ai_vars; 
 			const carousel	= lcl_ai_opts.carousel;
 			
-			if(lcl_is_active || v.elems.length < 2 || !lcl_ai_opts.gallery || $('.lcl_switching_elem').length) {
+			if(lcl_is_active || v.elems.length < 2 || !lcl_ai_opts.gallery || $('.lcl_switching_elem, .lcl_is_closing').length) {
                 return false;
             }
             
