@@ -147,9 +147,6 @@
 
 
 /* (2) window */
-#lcl_subj.lcl_switching_el > * {
-	opacity: 0;	
-}
 #lcl_contents_wrap { /* timing overrided by JS */ 
 	transition: opacity .3s ease;
     z-index: 88888;
@@ -428,7 +425,7 @@
 #lcl_wrap[lcl-type="html"].lcl_txt_under:not(.lcl_fullscreen_mode) #lcl_txt {
 	position: relative !important;	
 }
-#lcl_wrap[lcl-type="html"].lcl_txt_under:not(.lcl_forced_over) #lcl_contents_wrap, 
+#lcl_wrap[lcl-type="html"].lcl_txt_under #lcl_contents_wrap,
 #lcl_wrap[lcl-type="html"] #lcl_subj {
 	overflow: auto;			
 }
@@ -531,7 +528,7 @@
 		transform: scale(0.7);
 		transition: opacity .2s ease-in .5s, box-shadow .2s ease-in .5s, transform .2s ease-in .5s;
 	}
-	#lcl_window:not(.lcl_on_mobile):hover #lcl_nav_cmd .lcl_icon,
+    #lcl_wrap:not(.lcl_on_mobile) #lcl_window:hover #lcl_nav_cmd .lcl_icon,
 	.lcl_fullscreen_mode.lcl_outer_cmd:not(.lcl_on_mobile):not([lcl-type=iframe]):not([lcl-type=html]):hover #lcl_nav_cmd .lcl_icon {
 		opacity: 1;
 		transition: all .2s ease-in 0s;
@@ -733,7 +730,7 @@
     line-height: 34px !important;
 	transition: all .3s ease;	
 }
-#lcl_corner_close:not(.lcl_on_mobile):hover:before {
+#lcl_wrap:not(.lcl_on_mobile) #lcl_corner_close:hover:before {
 	transform: rotate(180deg);	
 }
 .lcl_normal_close #lcl_corner_close,
@@ -913,7 +910,6 @@
 	font-size: 14px;
 	line-height: 20px;	
 }
-.lcl_switching_el #lcl_txt,
 .lcl_txt_under_calc #lcl_txt, .lcl_txt_under_calc #lcl_txt *,
 .lcl_txt_under.lcl_is_resizing:not(.lcl_force_txt_over) #lcl_txt {
 	transition-duration: 0ms !important;
@@ -1075,7 +1071,8 @@
 		right: 220px;	
 	}
 	.lcl_txt_lside.lcl_inner_cmd:not(.lcl_no_txt):not(.lcl_force_txt_over) #lcl_nav_cmd,
-	.lcl_nav_btn_middle .lcl_txt_lside.lcl_inner_cmd:not(.lcl_no_txt):not(.lcl_force_txt_over) .lcl_prev, .lcl_fullscreen_mode.lcl_nav_btn_middle.lcl_txt_lside:not(.lcl_no_txt):not(.lcl_force_txt_over) .lcl_prev,
+    .lcl_nav_btn_middle.lcl_txt_lside.lcl_inner_cmd:not(.lcl_no_txt):not(.lcl_force_txt_over) .lcl_prev,
+    .lcl_fullscreen_mode.lcl_nav_btn_middle.lcl_txt_lside:not(.lcl_no_txt):not(.lcl_force_txt_over) .lcl_prev,
 	.lcl_fullscreen_mode.lcl_txt_lside:not(.lcl_no_txt):not(.lcl_force_txt_over) #lcl_thumbs_nav, .lcl_fullscreen_mode.lcl_txt_lside:not(.lcl_no_txt):not(.lcl_force_txt_over) #lcl_nav_cmd {
 		left: 220px;	
 	}
@@ -1402,7 +1399,7 @@
     display: none;   
 }
 #lcl_thumbs_nav.lcl_tn_has_arr span.lcl_tn_disabled_arr {
-    cursor: none;
+    cursor: default;
     opacity: .5;
 }
 #lcl_thumbs_nav.lcl_tn_has_arr span:before {

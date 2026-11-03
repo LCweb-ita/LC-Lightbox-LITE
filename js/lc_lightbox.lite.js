@@ -2,7 +2,7 @@
   * LC Lightbox - LITE
   * yet.. another jQuery lightbox.. or not?
   *
-  * @version	: 	2.2.0
+  * @version	: 	2.2.1
   * @copyright	:	Luca Montanari (LCweb)
   * @website	:	https://lcweb.it
   * @requires	:	jQuery v1.7 or later
@@ -975,7 +975,7 @@
 			}, false);
 		
 			function disableRubberBand(event) {
-				clientY = event.targetTouches[0].clientY - _clientY;
+				const clientY = event.targetTouches[0].clientY - _clientY;
 		
 				if (_overlay.scrollTop === 0 && clientY > 0) {
 					// element is at the top of its scroll
@@ -1064,7 +1064,7 @@
 
             $('.lcl_pre_forced_fs_first_elem').removeClass('lcl_pre_forced_fs_first_elem');
 			$('#lcl_subj').removeClass('lcl_switching_elem');
-            $('#lcl_window').focus();
+            $('#lcl_window')[0].focus({preventScroll: true});
 		};
 		
 		
@@ -1719,7 +1719,7 @@
 		
 		/* close lightbox */
 		const close_lb = function() {
-			if(!lcl_shown) {
+			if(!lcl_shown || $('#lcl_wrap.lcl_is_closing').length) {
                 return false;
             }
 			
@@ -2290,7 +2290,8 @@
                 $subj.on('pointerup pointercancel', endDrag);
 
                 // fallback: reset drag if window loses focus
-                $(window).on('blur', function() {
+                const blur_ns = 'blur.lcl_ss_' + ($subj.hasClass('lcl_tn_inner') ? 'tn' : 'subj');
+                $(window).off(blur_ns).on(blur_ns, function() {
                     curDown = false;
                     pointerId = null;
                 });
@@ -2530,11 +2531,12 @@
                 startDrag(e.pageX);
             });
 
-            $(document).on('mousemove', function(e) {
+            $(document).off('.lcl_drag');
+            $(document).on('mousemove.lcl_drag', function(e) {
                 moveDrag(e.pageX);
             });
 
-            $(document).on('mouseup blur mouseleave', endDrag);
+            $(document).on('mouseup.lcl_drag blur.lcl_drag mouseleave.lcl_drag', endDrag);
 
             // touch actions
             el.addEventListener('touchstart', function(e) {
@@ -2876,7 +2878,7 @@
                     index = focusableElements.index(document.activeElement);
 
                 index = ((index + 1) >= focusableElements.length) ? 0 : index + 1;
-                focusableElements.eq(index).focus();
+                focusableElements.eq(index)[0].focus({preventScroll: true});
             }
         });
         
